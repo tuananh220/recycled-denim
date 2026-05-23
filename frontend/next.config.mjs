@@ -8,8 +8,6 @@ const nextConfig = {
     ],
   },
   webpack: (config, { isServer }) => {
-    // Fabric.js v5 imports jsdom → canvas (native Node module).
-    // We only use Fabric on the client, so we tell webpack to ignore it.
     config.resolve.alias = {
       ...config.resolve.alias,
       canvas: false,
@@ -17,5 +15,9 @@ const nextConfig = {
     };
     return config;
   },
+  experimental: {
+    turbopack: false, // 👈 tắt Turbopack, ép dùng Webpack
+  },
 };
+
 export default nextConfig;
