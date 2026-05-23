@@ -4,7 +4,7 @@
     "target": "ES2022",
     "outDir": "./dist",
     "baseUrl": "./",
-    "rootDir": ".",
+    "rootDir": "./src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
