@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # INDIGO — Recycled Denim AI Fashion Platform
 
 A production-ready full-stack monorepo for an AI-powered recycled denim e-commerce brand.
@@ -101,3 +102,7 @@ cd frontend && pnpm dev
 
 ## 🛡 License
 MIT
+=======
+# recycled-denim
+my exe2 website
+>>>>>>> 7501161c3d1a95464f7f0b456b11dddc2d150430
