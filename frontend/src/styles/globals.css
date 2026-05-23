@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 30% 96%;       /* ecru */
+    --foreground: 215 35% 12%;
+    --muted: 215 20% 92%;
+    --muted-foreground: 215 12% 40%;
+    --border: 215 20% 88%;
+    --ring: 215 50% 30%;
+    --primary: 215 45% 22%;         /* indigo-800 ish */
+    --primary-foreground: 36 30% 96%;
+  }
+  .dark {
+    --background: 215 40% 6%;
+    --foreground: 36 25% 92%;
+    --muted: 215 25% 12%;
+    --muted-foreground: 215 12% 65%;
+    --border: 215 25% 16%;
+    --ring: 215 60% 55%;
+    --primary: 36 25% 92%;
+    --primary-foreground: 215 45% 14%;
+  }
+  * { @apply border-border; }
+  html, body { @apply bg-background text-foreground antialiased; }
+  body { font-feature-settings: 'cv11', 'ss01'; }
+  h1, h2, h3, h4 { @apply font-serif tracking-tight; }
+}
+
+@layer utilities {
+  .denim-grain {
+    background-image:
+      radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(180deg, #1f3a5f, #0f1f33);
+    background-size: 3px 3px, 100% 100%;
+  }
+  .shimmer {
+    background: linear-gradient(110deg, hsl(var(--muted)) 8%, hsl(var(--background)) 18%, hsl(var(--muted)) 33%);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+}

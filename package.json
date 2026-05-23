@@ -1,0 +1,15 @@
+{
+  "name": "indigo-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev:backend": "pnpm --filter @indigo/backend start:dev",
+    "dev:frontend": "pnpm --filter @indigo/frontend dev",
+    "build:backend": "pnpm --filter @indigo/backend build",
+    "build:frontend": "pnpm --filter @indigo/frontend build",
+    "prisma:migrate": "pnpm --filter @indigo/backend prisma:migrate",
+    "prisma:seed": "pnpm --filter @indigo/backend prisma:seed"
+  },
+  "packageManager": "pnpm@9.9.0",
+  "engines": { "node": ">=20" }
+}
