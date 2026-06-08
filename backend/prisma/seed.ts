@@ -1,5 +1,5 @@
 import { PrismaClient, PostStatus, Role } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
