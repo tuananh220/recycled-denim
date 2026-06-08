@@ -37,7 +37,7 @@ export class AuthService {
     const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new BadRequestException('Email already registered');
 
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const passwordHash = await bcryptjs.hash(dto.password, 10);
     const emailVerifyToken = randomBytes(32).toString('hex');
     const user = await this.prisma.user.create({
       data: {
@@ -50,7 +50,7 @@ export class AuthService {
     const tokens = await this.signTokens(user.id, user.role);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
+      data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
     });
     return { user: this.serialize(user), ...tokens };
   }
@@ -58,7 +58,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const ok = await bcrypt.compare(dto.password, user.passwordHash);
+    const ok = await bcryptjs.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
     const tokens = await this.signTokens(user.id, user.role);
