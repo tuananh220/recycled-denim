@@ -12,13 +12,30 @@ function readEnv(key: string): string | undefined {
   return v;
 }
 
+/**
+ * ESM-safe dynamic import.
+ * Backend compiles to CommonJS but @gradio/client is ESM-only.
+ * `(0, eval)` makes TypeScript treat the string as opaque → real import() survives.
+ */
+const importESM = (specifier: string): Promise<any> =>
+  // eslint-disable-next-line no-eval
+  (0, eval)(`import('${specifier}')`);
+
+let _gradioClient: any = null;
+async function loadGradioClient() {
+  if (!_gradioClient) {
+    const mod = await importESM('@gradio/client');
+    _gradioClient = mod.Client;
+  }
+  return _gradioClient;
+}
+
 @Injectable()
 export class TryonService {
   private readonly logger = new Logger(TryonService.name);
 
-  // Configuration
-  private readonly gradioSpace = readEnv('GRADIO_TRYON_SPACE');           // e.g. "yisol/IDM-VTON"
-  private readonly hfToken     = readEnv('HF_TOKEN');                      // for Gradio (private/rate-limit) + HF Inference
+  private readonly gradioSpace = readEnv('GRADIO_TRYON_SPACE');
+  private readonly hfToken     = readEnv('HF_TOKEN');
   private readonly fashnKey    = readEnv('FASHN_API_KEY');
   private readonly replicateKey = readEnv('REPLICATE_API_TOKEN');
 
@@ -28,7 +45,6 @@ export class TryonService {
     readEnv('CLOUDINARY_API_SECRET')
   );
 
-  // Provider priority: Gradio (free, public Spaces) → HF Inference → FASHN → Replicate → Mock
   private readonly provider: Provider = this.gradioSpace
     ? 'gradio'
     : this.hfToken
@@ -51,6 +67,7 @@ export class TryonService {
     this.logger.log(`  FASHN_API_KEY:     ${this.fashnKey ? 'set' : 'NOT SET'}`);
     this.logger.log(`  REPLICATE_TOKEN:   ${this.replicateKey ? 'set' : 'NOT SET'}`);
     this.logger.log(`  Cloudinary:        ${this.hasCloudinary ? 'ON' : 'OFF'}`);
+    this.logger.log(`  Build marker:      tryon.service v3-eval (${new Date().toISOString()})`);
     this.logger.log('═══════════════════════════════════════════════════');
   }
 
@@ -59,6 +76,7 @@ export class TryonService {
       provider: this.provider,
       gradioSpace: this.gradioSpace ?? null,
       hasCloudinary: this.hasCloudinary,
+      buildMarker: 'v3-eval',
       ready: true,
     };
   }
@@ -72,7 +90,6 @@ export class TryonService {
     const garmentUrl = product.images[0]?.url;
     if (!garmentUrl) throw new NotFoundException('Product image missing');
 
-    // Upload user photo to Cloudinary so AI provider can fetch it via URL
     let storedUser = userImageUrl;
     if (userImageUrl.startsWith('data:') && this.hasCloudinary) {
       try {
@@ -88,8 +105,7 @@ export class TryonService {
 
     if (realProvider && storedUser.startsWith('data:')) {
       this.logger.warn(
-        `Provider is ${this.provider} but user photo is data URI (Cloudinary not configured). ` +
-        `Falling back to mock for this request.`,
+        `Provider is ${this.provider} but user photo is data URI. Falling back to mock.`,
       );
     }
 
@@ -153,34 +169,16 @@ export class TryonService {
     return garmentUrl;
   }
 
-  /**
-   * Gradio Space client — works with any Gradio app on Hugging Face Spaces.
-   *
-   * IDM-VTON expects:
-   *   - dict: { background, layers, composite }  -- human image as editor input
-   *   - garm_img: garment file
-   *   - garment_des: text description
-   *   - is_checked, is_checked_crop, denoise_steps, seed
-   *
-   * Returns a tuple [outputImage, maskedImage]. We take [0].
-   *
-   * NOTES on free tier:
-   *   - Public Spaces have a queue → first request may wait 1-5 minutes
-   *   - Owner can rate-limit aggressively → 429 errors common
-   *   - Best practice: duplicate the Space to your own HF account (free CPU/GPU basic)
-   */
   private async runGradio(humanUrl: string, garmentUrl: string, product: any): Promise<string> {
-    // Dynamic import — @gradio/client is ESM-only
-    const { Client } = await import('@gradio/client');
+    const Client = await loadGradioClient();
 
-    const space = this.gradioSpace!; // e.g. "yisol/IDM-VTON" or "your-user/IDM-VTON-clone"
+    const space = this.gradioSpace!;
     this.logger.log(`Connecting to Gradio Space: ${space}`);
 
     const client = await Client.connect(space, {
       hf_token: this.hfToken ? (this.hfToken as `hf_${string}`) : undefined,
     });
 
-    // Fetch images as Blobs (Gradio client needs File/Blob)
     const [humanRes, garmentRes] = await Promise.all([fetch(humanUrl), fetch(garmentUrl)]);
     if (!humanRes.ok)   throw new Error(`Cannot fetch user image (${humanRes.status})`);
     if (!garmentRes.ok) throw new Error(`Cannot fetch garment image (${garmentRes.status})`);
@@ -198,14 +196,11 @@ export class TryonService {
       seed: 42,
     });
 
-    // result.data is a tuple [outputImage, maskedImage]
     const data = result?.data;
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error(`Unexpected Gradio response: ${JSON.stringify(data).slice(0, 200)}`);
     }
     const output = data[0];
-
-    // Output shape: { url, path } | { image: { url } } | string url
     const url =
       typeof output === 'string' ? output :
       output?.url ?? output?.image?.url ?? output?.path ?? null;
@@ -216,7 +211,6 @@ export class TryonService {
     return url;
   }
 
-  /** HF Inference API — only for models with the "Inference API" badge */
   private async runHuggingFace(humanUrl: string, garmentUrl: string): Promise<string> {
     const model = readEnv('HF_TRYON_MODEL') || 'yisol/IDM-VTON';
     const endpoint = `https://api-inference.huggingface.co/models/${model}`;
