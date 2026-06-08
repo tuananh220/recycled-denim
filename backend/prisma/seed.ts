@@ -20,7 +20,7 @@ async function main() {
       update: {},
       create: {
         email: u.email, name: u.name, role: u.role, emailVerified: true,
-        passwordHash: await bcrypt.hash(u.password, 10),
+        passwordHash: await bcryptjs.hash(u.password, 10),
       },
     });
   }
