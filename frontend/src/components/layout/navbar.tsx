@@ -6,6 +6,7 @@ import { Heart, Moon, Search, ShoppingBag, Sun, User, Menu, X } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/store/cart';
 import { useAuth } from '@/store/auth';
+import { BRAND } from '@/lib/brand';
 
 const links = [
   { href: '/shop', label: 'Shop' },
@@ -28,7 +29,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-background/90 backdrop-blur border-b border-border">
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="font-serif text-2xl tracking-[0.3em] font-semibold">INDIGO</Link>
+        <Link href="/" className="font-serif text-2xl tracking-[0.3em] font-semibold">{BRAND.nameDisplay}</Link>
 
         <nav className="hidden md:flex items-center gap-7 text-xs uppercase tracking-widest">
           {links.map((l) => (

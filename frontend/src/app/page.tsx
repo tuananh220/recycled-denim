@@ -1,59 +1,51 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Recycle, Sparkles, Palette } from 'lucide-react';
+import { ArrowRight, Recycle, Sparkles, Palette, Leaf, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TrustBadges } from '@/components/marketing/trust-badges';
-import { RecentlyViewed } from '@/components/marketing/recently-viewed';
 import { Testimonials } from '@/components/marketing/testimonials';
 import { InstagramFeed } from '@/components/marketing/instagram-feed';
+import { TvcVideo } from '@/components/marketing/tvc-video';
+import { BRAND } from '@/lib/brand';
 
 async function getFeatured() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?pageSize=6`, { next: { revalidate: 60 } });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?pageSize=4`, { next: { revalidate: 60 } });
     if (!res.ok) return [];
     const json = await res.json();
     return json.data ?? [];
   } catch { return []; }
 }
 
-async function getLatestPosts() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, { next: { revalidate: 300 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.slice(0, 3);
-  } catch { return []; }
-}
-
 export default async function Home() {
-  const [featured, posts] = await Promise.all([getFeatured(), getLatestPosts()]);
+  const featured = await getFeatured();
 
   return (
     <>
-      {/* HERO */}
+      {/* ============ HERO ============ */}
       <section className="relative h-[88vh] min-h-[560px] overflow-hidden">
         <div className="absolute inset-0 denim-grain" />
         <Image
           src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=2000&q=80"
-          alt="Recycled denim hero" fill priority sizes="100vw"
+          alt="ECHOVE recycled denim" fill priority sizes="100vw"
           className="object-cover opacity-60 mix-blend-overlay"
         />
         <div className="relative container h-full flex flex-col justify-end pb-20 text-denim-ecru">
-          <Badge className="border-denim-ecru text-denim-ecru w-fit mb-6">SS26 · The Reborn Drop</Badge>
+          <Badge className="border-denim-ecru text-denim-ecru w-fit mb-6">SS26 · 1-OF-1 DROP</Badge>
           <h1 className="text-6xl md:text-8xl font-serif leading-[0.95]">
-            Worn.<br />
-            <span className="italic font-light">Reborn.</span>
+            Jean cũ,<br />
+            <span className="italic font-light">chuyện mới.</span>
           </h1>
           <p className="mt-6 max-w-md text-base text-denim-ecru/80">
-            92% post-consumer recycled denim, AI-assisted fit, and zero-waste tailoring. Built for the next generation of style.
+            {BRAND.mission}
           </p>
-          <div className="mt-8 flex gap-3">
+          <div className="mt-8 flex gap-3 flex-wrap">
             <Button asChild size="lg" variant="outline" className="border-denim-ecru text-denim-ecru hover:bg-denim-ecru hover:text-indigo-900">
-              <Link href="/shop">Shop the drop <ArrowRight className="h-4 w-4" /></Link>
+              <Link href="/shop">Khám phá bộ sưu tập <ArrowRight className="h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="ghost" className="text-denim-ecru hover:bg-white/10">
-              <Link href="/try-on">Try AI fit</Link>
+              <Link href="#about">Câu chuyện ECHOVE</Link>
             </Button>
           </div>
         </div>
@@ -61,31 +53,81 @@ export default async function Home() {
 
       <TrustBadges />
 
-      {/* PILLARS */}
-      <section className="container py-24 grid md:grid-cols-3 gap-12">
-        {[
-          { icon: Recycle, title: 'Recycled, always', desc: 'Every garment is woven from 80–92% post-consumer denim, diverting tons of textile waste.' },
-          { icon: Sparkles, title: 'AI virtual try-on', desc: 'See exactly how a piece sits on you in seconds — no fitting room required.' },
-          { icon: Palette,  title: 'Design your own', desc: 'Drag, drop, paint and patch a one-of-one piece in our in-browser studio.' },
-        ].map((p) => (
-          <div key={p.title} className="animate-fade-up">
-            <p.icon className="h-6 w-6 text-denim-rust" />
-            <h3 className="mt-4 text-2xl">{p.title}</h3>
-            <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+      {/* ============ ABOUT US (Main focus) ============ */}
+      <section id="about" className="container py-24 lg:py-32">
+        <div className="grid lg:grid-cols-[1fr_1.4fr] gap-12 lg:gap-20 items-center">
+          {/* Left — text */}
+          <div>
+            <p className="text-xs uppercase tracking-widest text-denim-rust">About ECHOVE</p>
+            <h2 className="font-serif text-5xl md:text-6xl mt-4 leading-[1.05]">
+              Mỗi chiếc jean<br />
+              <span className="italic font-light">là một bản thể duy nhất.</span>
+            </h2>
+            <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
+              <p>
+                ECHOVE — kết hợp giữa <em className="text-foreground">Echo</em> (tiếng vang phản hồi từ môi trường) và <em className="text-foreground">Chove</em> (tiếng mưa trong tiếng Bồ Đào Nha) —
+                ra đời từ niềm tin rằng <strong className="text-foreground">mỗi chiếc jean cũ đều có một câu chuyện</strong> đáng được kể lại.
+              </p>
+              <p>
+                Chúng tôi thu gom denim đã qua sử dụng, tái sinh thành phụ kiện và trang phục độc bản
+                — không bộ sưu tập nào lặp lại. Mỗi thiết kế đều mang trong mình lịch sử của người chủ cũ,
+                cộng với tinh thần Gen Z hiện đại.
+              </p>
+              <p className="font-serif text-2xl italic text-foreground/90 pt-2">
+                "Cũ người, chất ta."
+              </p>
+            </div>
+
+            {/* Mini stats */}
+            <div className="grid grid-cols-3 gap-4 mt-10 pt-10 border-t border-border">
+              <MiniStat value="100%" label="Tái chế" />
+              <MiniStat value="1-of-1" label="Mỗi sản phẩm" />
+              <MiniStat value="Gen Z" label="HN & HCM" />
+            </div>
+
+            <div className="mt-10 flex gap-3">
+              <Button asChild><Link href="/about">Tìm hiểu thêm</Link></Button>
+              <Button asChild variant="outline"><Link href="/stories">Đọc câu chuyện</Link></Button>
+            </div>
           </div>
-        ))}
+
+          {/* Right — TVC Video */}
+          <div className="space-y-3">
+            <TvcVideo caption="ECHOVE — TVC 2026" />
+            <p className="text-xs text-muted-foreground text-center italic">
+              "Jean cũ, chuyện mới." — Hành trình tái sinh denim của ECHOVE.
+            </p>
+          </div>
+        </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
-      <section className="container pb-24">
+      {/* ============ PILLARS ============ */}
+      <section className="bg-muted/30 border-y border-border">
+        <div className="container py-24 grid md:grid-cols-3 gap-12">
+          {[
+            { icon: Recycle, title: 'Kinh tế tuần hoàn', desc: 'Thu gom denim cũ — tái sinh thành phụ kiện và trang phục độc bản, không bộ sưu tập nào lặp lại.' },
+            { icon: Sparkles, title: 'AI Virtual Try-On',  desc: 'Thử trực tiếp món đồ qua ảnh của bạn — không cần phòng thay đồ, không lo size sai.' },
+            { icon: Palette,  title: 'Tự thiết kế',         desc: 'Studio kéo-thả trên trình duyệt: thêm patch, vẽ, in chữ — designer ECHOVE sẽ may tay riêng cho bạn.' },
+          ].map((p) => (
+            <div key={p.title} className="animate-fade-up">
+              <p.icon className="h-7 w-7 text-denim-rust" />
+              <h3 className="mt-4 text-2xl font-serif">{p.title}</h3>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ FEATURED PRODUCTS ============ */}
+      <section className="container py-24">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <p className="text-xs uppercase tracking-widest text-denim-rust">New In</p>
-            <h2 className="text-4xl md:text-5xl mt-2">Featured pieces</h2>
+            <p className="text-xs uppercase tracking-widest text-denim-rust">Mới về</p>
+            <h2 className="text-4xl md:text-5xl mt-2 font-serif">Bộ sưu tập nổi bật</h2>
           </div>
-          <Link href="/shop" className="text-xs uppercase tracking-widest hover:text-denim-rust">View all →</Link>
+          <Link href="/shop" className="text-xs uppercase tracking-widest hover:text-denim-rust">Xem tất cả →</Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
           {featured.length === 0 && Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="shimmer aspect-[3/4]" />
           ))}
@@ -97,12 +139,14 @@ export default async function Home() {
                   alt={p.name} fill sizes="(max-width:768px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <span className="absolute top-3 left-3 text-[10px] uppercase tracking-widest bg-background/80 backdrop-blur px-2 py-1">
+                  1-of-1
+                </span>
               </div>
               <div className="mt-3 flex justify-between text-sm">
                 <span>{p.name}</span>
-                <span className="font-medium">${Number(p.price).toFixed(0)}</span>
+                <span className="font-medium">{Number(p.price).toLocaleString('vi-VN')}₫</span>
               </div>
-              <p className="text-xs text-muted-foreground mt-0.5">{p.recycledPercent}% recycled</p>
             </Link>
           ))}
         </div>
@@ -110,58 +154,48 @@ export default async function Home() {
 
       <Testimonials />
 
-      {/* STORIES TEASER */}
-      {posts.length > 0 && (
-        <section className="container py-24">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-denim-rust">Journal</p>
-              <h2 className="text-4xl md:text-5xl mt-2">Stories from the loom</h2>
-            </div>
-            <Link href="/stories" className="text-xs uppercase tracking-widest hover:text-denim-rust">Read all →</Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-x-6 gap-y-12">
-            {posts.map((p: any) => (
-              <Link key={p.id} href={`/stories/${p.slug}`} className="group">
-                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-                  <Image src={p.coverImageUrl} alt={p.title} fill sizes="33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <div className="mt-4">
-                  <div className="flex gap-2 text-[10px] uppercase tracking-widest text-denim-rust">
-                    {p.tags?.slice(0, 2).map((t: string) => <span key={t}>{t}</span>)}
-                  </div>
-                  <h3 className="font-serif text-xl mt-2 group-hover:text-denim-rust transition-colors">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{p.excerpt}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <RecentlyViewed />
-
-      {/* CTA BAND */}
+      {/* ============ CTA BAND ============ */}
       <section className="bg-indigo-900 text-denim-ecru py-24">
         <div className="container grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-5xl">Designed by you.<br /><span className="italic font-light">Crafted by us.</span></h2>
+            <Leaf className="h-6 w-6 mb-4 text-denim-ecru/80" />
+            <h2 className="font-serif text-5xl leading-tight">
+              Đem jean cũ cho ECHOVE.<br />
+              <span className="italic font-light">Nhận voucher tái sinh.</span>
+            </h2>
             <p className="mt-4 text-denim-ecru/70 max-w-md">
-              Sketch your idea in our in-browser studio, our designers review every piece, and we hand-craft it from reclaimed denim.
+              Gửi quần jean cũ của bạn (bất kỳ thương hiệu) đến ECHOVE — bạn sẽ nhận 100.000₫ voucher
+              + một câu chuyện mới cho chiếc jean ấy.
             </p>
             <Button asChild size="lg" variant="outline" className="mt-8 border-denim-ecru text-denim-ecru hover:bg-denim-ecru hover:text-indigo-900">
-              <Link href="/design">Open the studio</Link>
+              <Link href="/contact">Tham gia chương trình</Link>
             </Button>
           </div>
           <div className="relative aspect-square">
             <Image src="https://images.unsplash.com/photo-1604176354204-9268737828e4?w=1000"
-              alt="Custom design" fill className="object-cover" sizes="(max-width:768px) 100vw, 40vw" />
+              alt="ECHOVE take-back program" fill className="object-cover" sizes="(max-width:768px) 100vw, 40vw" />
           </div>
         </div>
       </section>
 
+      {/* ============ LOCATION ============ */}
+      <section className="container py-20 text-center">
+        <MapPin className="h-5 w-5 mx-auto text-denim-rust" />
+        <p className="text-xs uppercase tracking-widest text-denim-rust mt-3">Atelier</p>
+        <h2 className="font-serif text-3xl md:text-4xl mt-3">{BRAND.address}</h2>
+        <p className="mt-3 text-sm text-muted-foreground">{BRAND.audience} · Đặt lịch tham quan studio: {BRAND.email}</p>
+      </section>
+
       <InstagramFeed />
     </>
+  );
+}
+
+function MiniStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <p className="font-serif text-3xl">{value}</p>
+      <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{label}</p>
+    </div>
   );
 }
