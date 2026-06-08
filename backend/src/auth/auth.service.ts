@@ -64,7 +64,7 @@ export class AuthService {
     const tokens = await this.signTokens(user.id, user.role);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
+      data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
     });
     return { user: this.serialize(user), ...tokens };
   }
@@ -74,13 +74,13 @@ export class AuthService {
       const payload = await this.jwt.verifyAsync(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user?.refreshTokenHash) throw new UnauthorizedException();
-      const valid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+      const valid = await bcryptjs.compare(refreshToken, user.refreshTokenHash);
       if (!valid) throw new UnauthorizedException();
 
       const tokens = await this.signTokens(user.id, user.role);
       await this.prisma.user.update({
         where: { id: user.id },
-        data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
+        data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
       });
       return tokens;
     } catch {
@@ -122,7 +122,7 @@ export class AuthService {
     }
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash: await bcrypt.hash(password, 10), resetToken: null, resetTokenExpiry: null },
+      data: { passwordHash: await bcryptjs.hash(password, 10), resetToken: null, resetTokenExpiry: null },
     });
     return { success: true };
   }
