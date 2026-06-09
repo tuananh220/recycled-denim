@@ -1,10 +1,18 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcryptjs from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
+
+export interface OAuthProfile {
+  provider: 'google' | 'facebook' | 'github';
+  providerId: string;
+  email?: string;
+  name?: string;
+  avatarUrl?: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -37,7 +45,7 @@ export class AuthService {
     const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new BadRequestException('Email already registered');
 
-    const passwordHash = await bcryptjs.hash(dto.password, 10);
+    const passwordHash = await bcrypt.hash(dto.password, 10);
     const emailVerifyToken = randomBytes(32).toString('hex');
     const user = await this.prisma.user.create({
       data: {
@@ -50,7 +58,7 @@ export class AuthService {
     const tokens = await this.signTokens(user.id, user.role);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
+      data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
     });
     return { user: this.serialize(user), ...tokens };
   }
@@ -58,13 +66,69 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const ok = await bcryptjs.compare(dto.password, user.passwordHash);
+    if (!user.passwordHash) {
+      throw new UnauthorizedException(
+        'This account was created with a social provider. Please sign in with Google/Facebook/GitHub.',
+      );
+    }
+    const ok = await bcrypt.compare(dto.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid credentials');
 
     const tokens = await this.signTokens(user.id, user.role);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
+      data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
+    });
+    return { user: this.serialize(user), ...tokens };
+  }
+
+  /**
+   * OAuth sign-in flow:
+   * 1) If we already saw this (provider, providerId), use that user.
+   * 2) Else, if email exists, link the new provider to that user.
+   * 3) Else, create a brand new account.
+   */
+  async loginWithOAuth(p: OAuthProfile) {
+    if (!p.providerId) throw new BadRequestException('Missing provider id');
+
+    // 1) Existing link?
+    const link = await this.prisma.oAuthAccount.findUnique({
+      where: { provider_providerId: { provider: p.provider, providerId: p.providerId } },
+      include: { user: true },
+    });
+    let user = link?.user;
+
+    // 2) Link to existing email account?
+    if (!user && p.email) {
+      user = await this.prisma.user.findUnique({ where: { email: p.email } }) || undefined;
+      if (user) {
+        await this.prisma.oAuthAccount.create({
+          data: { userId: user.id, provider: p.provider, providerId: p.providerId, email: p.email },
+        });
+      }
+    }
+
+    // 3) Create new account
+    if (!user) {
+      const placeholderEmail = p.email || `${p.provider}_${p.providerId}@oauth.local`;
+      user = await this.prisma.user.create({
+        data: {
+          email: placeholderEmail,
+          name: p.name || 'New User',
+          avatarUrl: p.avatarUrl,
+          emailVerified: !!p.email, // verified if provider gave email
+          cart: { create: {} },
+          oauthAccounts: {
+            create: { provider: p.provider, providerId: p.providerId, email: p.email },
+          },
+        },
+      });
+    }
+
+    const tokens = await this.signTokens(user.id, user.role);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
     });
     return { user: this.serialize(user), ...tokens };
   }
@@ -74,13 +138,13 @@ export class AuthService {
       const payload = await this.jwt.verifyAsync(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user?.refreshTokenHash) throw new UnauthorizedException();
-      const valid = await bcryptjs.compare(refreshToken, user.refreshTokenHash);
+      const valid = await bcrypt.compare(refreshToken, user.refreshTokenHash);
       if (!valid) throw new UnauthorizedException();
 
       const tokens = await this.signTokens(user.id, user.role);
       await this.prisma.user.update({
         where: { id: user.id },
-        data: { refreshTokenHash: await bcryptjs.hash(tokens.refreshToken, 10) },
+        data: { refreshTokenHash: await bcrypt.hash(tokens.refreshToken, 10) },
       });
       return tokens;
     } catch {
@@ -105,7 +169,7 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) return { success: true }; // don't leak
+    if (!user) return { success: true };
     const token = randomBytes(32).toString('hex');
     await this.prisma.user.update({
       where: { id: user.id },
@@ -122,7 +186,7 @@ export class AuthService {
     }
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash: await bcryptjs.hash(password, 10), resetToken: null, resetTokenExpiry: null },
+      data: { passwordHash: await bcrypt.hash(password, 10), resetToken: null, resetTokenExpiry: null },
     });
     return { success: true };
   }
