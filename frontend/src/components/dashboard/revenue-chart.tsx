@@ -5,13 +5,18 @@ interface Row { day: string; revenue: number }
 
 export function RevenueChart({ data }: { data: Row[] }) {
   const normalized = data.map((d) => ({
-    day: new Date(d.day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    day: new Date(d.day).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
     revenue: Number(d.revenue) || 0,
   }));
 
   if (normalized.length === 0) {
-    return <div className="h-64 grid place-items-center text-sm text-muted-foreground">No revenue data yet.</div>;
+    return <div className="h-64 grid place-items-center text-sm text-muted-foreground">Chưa có dữ liệu doanh thu.</div>;
   }
+
+  const fmtVND = (v: number) =>
+    v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}tr`
+    : v >= 1_000   ? `${(v / 1_000).toFixed(0)}k`
+    : `${v}`;
 
   return (
     <div className="h-64">
@@ -25,10 +30,10 @@ export function RevenueChart({ data }: { data: Row[] }) {
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
           <XAxis dataKey="day" tickLine={false} axisLine={false} className="text-xs" />
-          <YAxis tickLine={false} axisLine={false} className="text-xs" width={50} tickFormatter={(v) => `$${v}`} />
+          <YAxis tickLine={false} axisLine={false} className="text-xs" width={50} tickFormatter={fmtVND} />
           <Tooltip
             contentStyle={{ background: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', fontSize: 12 }}
-            formatter={(v: any) => [`$${Number(v).toFixed(2)}`, 'Revenue']}
+            formatter={(v: any) => [`${Number(v).toLocaleString('vi-VN')} VNĐ`, 'Doanh thu']}
           />
           <Area type="monotone" dataKey="revenue" stroke="#2d4a6b" strokeWidth={2} fill="url(#rev)" />
         </AreaChart>

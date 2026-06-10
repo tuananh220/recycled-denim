@@ -6,44 +6,53 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { BRAND } from '@/lib/brand';
 
 interface FormValues { name: string; email: string; subject: string; message: string }
 
 export default function ContactPage() {
   const { register, handleSubmit, reset, formState } = useForm<FormValues>();
 
-  async function onSubmit(v: FormValues) {
-    // TODO: wire to backend /contact endpoint or 3rd-party (Formspree, Resend)
+  async function onSubmit(_v: FormValues) {
+    // TODO: wire to backend /contact endpoint
     await new Promise((r) => setTimeout(r, 600));
-    toast.success('Message sent — we\'ll reply within 24h.');
+    toast.success('Đã gửi tin nhắn — chúng tôi sẽ phản hồi trong 24h.');
     reset();
   }
 
   return (
     <div className="container py-16 grid lg:grid-cols-[1fr_360px] gap-12 max-w-5xl">
       <div>
-        <p className="text-xs uppercase tracking-widest text-denim-rust">Contact</p>
-        <h1 className="font-serif text-5xl mt-3 mb-8">Get in touch.</h1>
+        <p className="text-xs uppercase tracking-widest text-denim-rust">Liên hệ</p>
+        <h1 className="font-serif text-5xl mt-3 mb-8">Để lại lời nhắn.</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-lg">
           <div className="grid sm:grid-cols-2 gap-4">
-            <div><Label className="mb-1.5 block">Name</Label><Input {...register('name', { required: true })} /></div>
+            <div><Label className="mb-1.5 block">Họ tên</Label><Input {...register('name', { required: true })} /></div>
             <div><Label className="mb-1.5 block">Email</Label><Input type="email" {...register('email', { required: true })} /></div>
           </div>
-          <div><Label className="mb-1.5 block">Subject</Label><Input {...register('subject', { required: true })} /></div>
-          <div><Label className="mb-1.5 block">Message</Label><Textarea rows={6} {...register('message', { required: true })} /></div>
-          <Button size="lg" disabled={formState.isSubmitting}>{formState.isSubmitting ? 'Sending…' : 'Send message'}</Button>
+          <div><Label className="mb-1.5 block">Tiêu đề</Label><Input {...register('subject', { required: true })} /></div>
+          <div><Label className="mb-1.5 block">Nội dung</Label><Textarea rows={6} {...register('message', { required: true })} /></div>
+          <Button size="lg" disabled={formState.isSubmitting}>
+            {formState.isSubmitting ? 'Đang gửi…' : 'Gửi tin nhắn'}
+          </Button>
         </form>
       </div>
 
       <aside className="lg:border-l lg:border-border lg:pl-12 space-y-8">
-        <ContactRow icon={Mail}     label="Email"   value="hello@indigo.dev" />
-        <ContactRow icon={Phone}    label="Phone"   value="+84 236 1234 567" />
-        <ContactRow icon={MapPin}   label="Atelier" value={'42 Bach Dang St.\nDa Nang, Vietnam'} />
+        <ContactRow icon={Mail}   label="Email"   value={BRAND.email} />
+        <ContactRow icon={Phone}  label="Điện thoại" value={BRAND.phone} />
+        <ContactRow icon={MapPin} label="Atelier" value={BRAND.address} />
 
         <div className="pt-4 border-t border-border">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Customer support</p>
-          <p className="text-sm">Mon–Fri · 9am – 6pm ICT</p>
-          <p className="text-sm text-muted-foreground mt-1">Response within 24 hours.</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Giờ hỗ trợ</p>
+          <p className="text-sm">Thứ 2 – Thứ 6 · 9h – 18h</p>
+          <p className="text-sm text-muted-foreground mt-1">Phản hồi trong vòng 24 giờ.</p>
+        </div>
+
+        <div className="pt-4 border-t border-border">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Take-back</p>
+          <p className="text-sm">Gửi jean cũ qua bưu điện hoặc đem trực tiếp đến Atelier.</p>
+          <p className="text-sm text-muted-foreground mt-1">Nhận voucher <strong className="text-foreground">100.000 VNĐ</strong> trong 3-5 ngày.</p>
         </div>
       </aside>
     </div>

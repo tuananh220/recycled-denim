@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/store/auth';
 
-const dashboardByRole: Record<string, string> = {
-  ADMIN: '/dashboard/admin',
-  STAFF: '/dashboard/staff',
-  DESIGNER: '/dashboard/designer',
-  WAREHOUSE: '/dashboard/warehouse',
+const dashboardByRole: Record<string, { href: string; label: string }> = {
+  ADMIN:     { href: '/dashboard/admin',     label: 'Quản trị (Admin)' },
+  STAFF:     { href: '/dashboard/staff',     label: 'Nhân viên (Staff)' },
+  DESIGNER:  { href: '/dashboard/designer',  label: 'Designer' },
+  WAREHOUSE: { href: '/dashboard/warehouse', label: 'Kho hàng' },
 };
 
 export default function AccountPage() {
@@ -19,26 +19,30 @@ export default function AccountPage() {
   useEffect(() => { fetchMe(); }, [fetchMe]);
   useEffect(() => { if (hydrated && !user) router.push('/login'); }, [hydrated, user, router]);
 
-  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Loading…</div>;
+  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Đang tải…</div>;
   if (!user) return null;
 
   const dash = dashboardByRole[user.role];
 
   return (
     <div className="container py-12 max-w-3xl">
-      <h1 className="text-4xl mb-2">Hi, {user.name}</h1>
-      <p className="text-sm text-muted-foreground mb-8">{user.email} · <span className="uppercase tracking-widest">{user.role}</span></p>
+      <h1 className="text-4xl mb-2 font-serif">Xin chào, {user.name}</h1>
+      <p className="text-sm text-muted-foreground mb-8">
+        {user.email} · <span className="uppercase tracking-widest">{user.role}</span>
+      </p>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <AccountTile href="/orders" title="My orders" desc="Track every delivery" />
-        <AccountTile href="/wishlist" title="Wishlist" desc="Saved for later" />
-        <AccountTile href="/try-on" title="AI try-on history" desc="View past generations" />
-        <AccountTile href="/design" title="My designs" desc="Drafts & reviews" />
-        {dash && <AccountTile href={dash} title={`${user.role.toLowerCase()} dashboard`} desc="Internal tools" />}
+        <AccountTile href="/orders" title="Đơn hàng của tôi" desc="Theo dõi giao hàng" />
+        <AccountTile href="/wishlist" title="Yêu thích" desc="Sản phẩm đã lưu" />
+        <AccountTile href="/try-on" title="Thử AI" desc="Lịch sử thử đồ ảo" />
+        <AccountTile href="/design" title="Thiết kế của tôi" desc="Bản nháp & đang review" />
+        {dash && <AccountTile href={dash.href} title={dash.label} desc="Công cụ nội bộ" />}
       </div>
 
       <div className="mt-12">
-        <Button variant="outline" onClick={() => logout().then(() => router.push('/'))}>Sign out</Button>
+        <Button variant="outline" onClick={() => logout().then(() => router.push('/'))}>
+          Đăng xuất
+        </Button>
       </div>
     </div>
   );

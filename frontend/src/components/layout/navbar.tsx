@@ -9,12 +9,12 @@ import { useAuth } from '@/store/auth';
 import { BRAND } from '@/lib/brand';
 
 const links = [
-  { href: '/shop', label: 'Shop' },
+  { href: '/shop', label: 'Cửa hàng' },
   { href: '/lookbook', label: 'Lookbook' },
-  { href: '/try-on', label: 'Try-On' },
-  { href: '/design', label: 'Design' },
-  { href: '/stories', label: 'Stories' },
-  { href: '/about', label: 'About' },
+  { href: '/try-on', label: 'Thử AI' },
+  { href: '/design', label: 'Thiết kế' },
+  { href: '/stories', label: 'Câu chuyện' },
+  { href: '/about', label: 'Về ECHOVE' },
 ];
 
 export function Navbar() {
@@ -38,16 +38,16 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" aria-label="Search" asChild>
+          <Button variant="ghost" size="icon" aria-label="Tìm kiếm" asChild>
             <Link href="/shop"><Search className="h-4 w-4" /></Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Wishlist" asChild>
+          <Button variant="ghost" size="icon" aria-label="Yêu thích" asChild>
             <Link href="/wishlist"><Heart className="h-4 w-4" /></Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Account" asChild>
+          <Button variant="ghost" size="icon" aria-label="Tài khoản" asChild>
             <Link href={user ? '/account' : '/login'}><User className="h-4 w-4" /></Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Cart" asChild>
+          <Button variant="ghost" size="icon" aria-label="Giỏ hàng" asChild>
             <Link href="/cart" className="relative">
               <ShoppingBag className="h-4 w-4" />
               {items.length > 0 && (
@@ -57,7 +57,7 @@ export function Navbar() {
               )}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Theme" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+          <Button variant="ghost" size="icon" aria-label="Chế độ tối" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             <Sun className="h-4 w-4 hidden dark:inline" />
             <Moon className="h-4 w-4 dark:hidden" />
           </Button>

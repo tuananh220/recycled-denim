@@ -12,6 +12,7 @@ export class CreateProductDto {
   @IsOptional() @IsInt() recycledPercent?: number;
   @IsString() categoryId: string;
   @IsOptional() @IsArray() imageUrls?: string[];
+  @IsOptional() @IsBoolean() isActive?: boolean;
   @IsOptional() @IsBoolean() isFeatured?: boolean;
 }
 

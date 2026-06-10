@@ -3,11 +3,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
-  title: 'Lookbook — SS26 Reborn',
-  description: 'Editorial imagery from the SS26 Reborn collection.',
+  title: 'Lookbook — SS26 Tái Sinh',
+  description: 'Bộ ảnh editorial từ bộ sưu tập SS26 Tái Sinh của ECHOVE.',
 };
 
-// Editorial layout — mix of portrait/landscape to feel like a magazine spread
 const looks = [
   { src: 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=1600', span: 'lg:col-span-2 lg:row-span-2', title: 'Look 01' },
   { src: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=1200',  span: '', title: 'Look 02' },
@@ -21,16 +20,15 @@ const looks = [
 export default function LookbookPage() {
   return (
     <>
-      {/* Intro */}
       <section className="container py-16 max-w-3xl text-center">
         <p className="text-xs uppercase tracking-widest text-denim-rust">SS26</p>
-        <h1 className="font-serif text-5xl md:text-7xl mt-3">Reborn.</h1>
+        <h1 className="font-serif text-5xl md:text-7xl mt-3">Tái Sinh.</h1>
         <p className="mt-6 text-muted-foreground">
-          A study in subtractive design. Seven looks, all crafted from reclaimed indigo. Shot on film in Da Nang by Marcus Yu.
+          Bảy outfit, tất cả từ jean cũ tái chế. Chụp tại Atelier ECHOVE — Quận 2, TP.HCM. 
+          Photography: Nam Hoàng. Stylist: Linh Đan.
         </p>
       </section>
 
-      {/* Editorial grid */}
       <section className="container pb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-[minmax(280px,1fr)] gap-4">
           {looks.map((l) => (
@@ -45,10 +43,9 @@ export default function LookbookPage() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="container pb-24 text-center">
-        <h2 className="font-serif text-4xl">Shop the looks.</h2>
-        <Button asChild size="lg" className="mt-6"><Link href="/shop">Browse SS26</Link></Button>
+        <h2 className="font-serif text-4xl">Khám phá bộ sưu tập</h2>
+        <Button asChild size="lg" className="mt-6"><Link href="/shop">Xem SS26</Link></Button>
       </section>
     </>
   );

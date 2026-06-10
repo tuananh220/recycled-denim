@@ -28,16 +28,18 @@ export default function WishlistPage() {
   async function remove(productId: string) {
     await api.delete(`/wishlist/${productId}`);
     setItems((arr) => arr.filter((x) => x.productId !== productId));
-    toast.success('Removed');
+    toast.success('Đã xóa');
   }
 
-  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Loading…</div>;
+  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Đang tải…</div>;
   if (!user) return null;
 
   return (
     <div className="container py-12">
-      <h1 className="text-4xl mb-8">Wishlist</h1>
-      {items.length === 0 && <p className="text-muted-foreground">Nothing saved yet.</p>}
+      <h1 className="text-4xl mb-8 font-serif">Sản phẩm yêu thích</h1>
+      {items.length === 0 && (
+        <p className="text-muted-foreground">Bạn chưa lưu sản phẩm nào.</p>
+      )}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
         {items.map((w) => (
           <div key={w.id} className="relative group">

@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
 
 export const metadata = {
-  title: 'Stories — Journal',
-  description: 'Sustainability, craft, and the people behind INDIGO.',
+  title: 'Câu chuyện',
+  description: 'Bền vững, thủ công, và những con người đứng sau ECHOVE.',
 };
 
 async function getPosts(): Promise<any[]> {
@@ -21,14 +21,13 @@ export default async function StoriesPage() {
 
   return (
     <div className="container py-16">
-      <p className="text-xs uppercase tracking-widest text-denim-rust">Journal</p>
-      <h1 className="font-serif text-5xl md:text-6xl mt-3 mb-12">Stories</h1>
+      <p className="text-xs uppercase tracking-widest text-denim-rust">Tạp chí</p>
+      <h1 className="font-serif text-5xl md:text-6xl mt-3 mb-12">Câu chuyện</h1>
 
       {posts.length === 0 ? (
-        <p className="text-muted-foreground">No stories published yet.</p>
+        <p className="text-muted-foreground">Chưa có bài viết nào được xuất bản.</p>
       ) : (
         <>
-          {/* Hero post */}
           {hero && (
             <Link href={`/stories/${hero.slug}`} className="group block mb-20">
               <div className="grid lg:grid-cols-2 gap-8 items-center">
@@ -48,7 +47,6 @@ export default async function StoriesPage() {
             </Link>
           )}
 
-          {/* Grid */}
           {rest.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-14 border-t border-border pt-16">
               {rest.map((p) => (

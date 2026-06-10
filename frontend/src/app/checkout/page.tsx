@@ -18,13 +18,19 @@ interface FormValues {
   couponCode?: string;
 }
 
+const PAYMENT_LABELS: Record<string, string> = {
+  COD: 'Thanh toán khi nhận (COD)',
+  STRIPE: 'Thẻ tín dụng',
+  PAYPAL: 'PayPal',
+};
+
 export default function CheckoutPage() {
   const { user, hydrated, fetchMe } = useAuth();
   const { items, fetch, subtotal, clear } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
   const { register, handleSubmit } = useForm<FormValues>({
-    defaultValues: { country: 'US', paymentProvider: 'COD' },
+    defaultValues: { country: 'Vietnam', paymentProvider: 'COD' },
   });
 
   useEffect(() => { fetchMe(); }, [fetchMe]);
@@ -35,9 +41,8 @@ export default function CheckoutPage() {
   }, [hydrated, user, router, fetch]);
 
   const sub = subtotal();
-  const shipping = sub > 200 ? 0 : 12;
-  const tax = +(sub * 0.08).toFixed(2);
-  const total = sub + shipping + tax;
+  const shipping = sub >= 500_000 ? 0 : 30_000;
+  const total = sub + shipping;
 
   async function onSubmit(v: FormValues) {
     setSubmitting(true);
@@ -51,55 +56,59 @@ export default function CheckoutPage() {
         },
       });
       await clear();
-      toast.success('Order placed!');
+      toast.success('Đặt hàng thành công!');
       router.push(`/orders/${data.id}`);
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Checkout failed');
+      toast.error(e?.response?.data?.message || 'Đặt hàng thất bại');
     } finally { setSubmitting(false); }
   }
 
-  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Loading…</div>;
+  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Đang tải…</div>;
   if (!user || items.length === 0) return null;
 
   return (
     <div className="container py-12 grid lg:grid-cols-[1fr_400px] gap-12">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <h1 className="text-4xl">Checkout</h1>
+        <h1 className="text-4xl font-serif">Thanh toán</h1>
 
         <section>
-          <h2 className="text-xs uppercase tracking-widest mb-4">Shipping</h2>
+          <h2 className="text-xs uppercase tracking-widest mb-4">Địa chỉ giao hàng</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Full name"><Input {...register('fullName', { required: true })} /></Field>
-            <Field label="Phone"><Input {...register('phone', { required: true })} /></Field>
-            <Field label="Address line 1" className="sm:col-span-2"><Input {...register('line1', { required: true })} /></Field>
-            <Field label="Address line 2" className="sm:col-span-2"><Input {...register('line2')} /></Field>
-            <Field label="City"><Input {...register('city', { required: true })} /></Field>
-            <Field label="Postal code"><Input {...register('postalCode', { required: true })} /></Field>
-            <Field label="Country"><Input {...register('country', { required: true })} /></Field>
+            <Field label="Họ và tên"><Input {...register('fullName', { required: true })} /></Field>
+            <Field label="Số điện thoại"><Input {...register('phone', { required: true })} placeholder="0901 234 567" /></Field>
+            <Field label="Địa chỉ" className="sm:col-span-2"><Input {...register('line1', { required: true })} placeholder="Số nhà, tên đường" /></Field>
+            <Field label="Phường/Xã" className="sm:col-span-2"><Input {...register('line2')} placeholder="(Tùy chọn)" /></Field>
+            <Field label="Quận/Huyện"><Input {...register('city', { required: true })} /></Field>
+            <Field label="Tỉnh/Thành phố"><Input {...register('postalCode', { required: true })} /></Field>
+            <Field label="Quốc gia"><Input {...register('country', { required: true })} /></Field>
           </div>
         </section>
 
         <section>
-          <h2 className="text-xs uppercase tracking-widest mb-4">Payment</h2>
+          <h2 className="text-xs uppercase tracking-widest mb-4">Phương thức thanh toán</h2>
           <div className="flex gap-3 flex-wrap">
             {(['COD', 'STRIPE', 'PAYPAL'] as const).map((p) => (
-              <label key={p} className="border border-border px-4 py-3 cursor-pointer has-[:checked]:bg-indigo-900 has-[:checked]:text-denim-ecru">
+              <label key={p} className="border border-border px-4 py-3 cursor-pointer has-[:checked]:bg-indigo-900 has-[:checked]:text-denim-ecru transition">
                 <input type="radio" value={p} {...register('paymentProvider')} className="hidden" />
-                {p === 'COD' ? 'Cash on delivery' : p}
+                {PAYMENT_LABELS[p]}
               </label>
             ))}
           </div>
         </section>
 
         <section>
-          <Field label="Coupon code (optional)"><Input {...register('couponCode')} /></Field>
+          <Field label="Mã giảm giá (tùy chọn)">
+            <Input {...register('couponCode')} placeholder="CHAO10 / TAISINH" />
+          </Field>
         </section>
 
-        <Button size="lg" disabled={submitting}>{submitting ? 'Placing order…' : `Place order — ${formatCurrency(total)}`}</Button>
+        <Button size="lg" disabled={submitting}>
+          {submitting ? 'Đang xử lý…' : `Đặt hàng — ${formatCurrency(total)}`}
+        </Button>
       </form>
 
       <aside className="lg:sticky lg:top-24 lg:self-start border border-border p-6 space-y-3">
-        <h2 className="text-xs uppercase tracking-widest mb-2">Your bag</h2>
+        <h2 className="text-xs uppercase tracking-widest mb-2">Đơn hàng của bạn</h2>
         <ul className="space-y-2 text-sm">
           {items.map((i) => (
             <li key={i.id} className="flex justify-between">
@@ -109,10 +118,9 @@ export default function CheckoutPage() {
           ))}
         </ul>
         <div className="border-t border-border pt-3 text-sm space-y-1">
-          <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(sub)}</span></div>
-          <div className="flex justify-between"><span>Shipping</span><span>{shipping ? formatCurrency(shipping) : 'Free'}</span></div>
-          <div className="flex justify-between"><span>Tax</span><span>{formatCurrency(tax)}</span></div>
-          <div className="flex justify-between font-medium text-base pt-2 border-t border-border"><span>Total</span><span>{formatCurrency(total)}</span></div>
+          <div className="flex justify-between"><span>Tạm tính</span><span>{formatCurrency(sub)}</span></div>
+          <div className="flex justify-between"><span>Vận chuyển</span><span>{shipping ? formatCurrency(shipping) : 'Miễn phí'}</span></div>
+          <div className="flex justify-between font-medium text-base pt-2 border-t border-border"><span>Tổng cộng</span><span>{formatCurrency(total)}</span></div>
         </div>
       </aside>
     </div>

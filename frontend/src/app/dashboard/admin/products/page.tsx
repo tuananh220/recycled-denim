@@ -25,28 +25,26 @@ export default function AdminProductsPage() {
   useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
 
   async function remove(id: string) {
-    if (!confirm('Deactivate this product?')) return;
-    try { await api.delete(`/products/${id}`); toast.success('Deactivated'); load(); }
-    catch { toast.error('Failed'); }
+    if (!confirm('Ẩn sản phẩm này?')) return;
+    try { await api.delete(`/products/${id}`); toast.success('Đã ẩn'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   return (
     <AdminShell
       allow={['ADMIN']}
-      title="Products"
-      description="Manage your catalog — create, edit, deactivate."
-      actions={
-        <Button asChild><Link href="/dashboard/admin/products/new"><Plus className="h-4 w-4" /> New product</Link></Button>
-      }
+      title="Sản phẩm"
+      description="Quản lý danh mục sản phẩm — tạo, sửa, ẩn."
+      actions={<Button asChild><Link href="/dashboard/admin/products/new"><Plus className="h-4 w-4" /> Sản phẩm mới</Link></Button>}
     >
       <div className="flex gap-2 mb-4">
-        <Input placeholder="Search by name or slug…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />
-        <Button variant="outline" onClick={load} disabled={loading}>Search</Button>
+        <Input placeholder="Tìm theo tên hoặc slug…" value={q} onChange={(e) => setQ(e.target.value)} className="max-w-sm" />
+        <Button variant="outline" onClick={load} disabled={loading}>Tìm</Button>
       </div>
 
       <DataTable
         rows={rows}
-        empty="No products yet."
+        empty="Chưa có sản phẩm nào."
         columns={[
           {
             key: 'thumb', header: '', className: 'w-16',
@@ -56,7 +54,7 @@ export default function AdminProductsPage() {
               : <div className="w-12 h-12 bg-muted" />,
           },
           {
-            key: 'name', header: 'Product',
+            key: 'name', header: 'Sản phẩm',
             cell: (r: any) => (
               <div>
                 <Link href={`/shop/${r.slug}`} className="font-medium hover:text-denim-rust">{r.name}</Link>
@@ -64,25 +62,25 @@ export default function AdminProductsPage() {
               </div>
             ),
           },
-          { key: 'cat', header: 'Category', cell: (r: any) => r.category?.name },
-          { key: 'price', header: 'Price', cell: (r: any) => formatCurrency(Number(r.price)) },
+          { key: 'cat',   header: 'Danh mục', cell: (r: any) => r.category?.name },
+          { key: 'price', header: 'Giá',      cell: (r: any) => formatCurrency(Number(r.price)) },
           {
-            key: 'status', header: 'Status',
+            key: 'status', header: 'Trạng thái',
             cell: (r: any) => (
               <span className={`text-xs uppercase tracking-widest px-2 py-0.5 ${r.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-muted text-muted-foreground'}`}>
-                {r.isActive ? 'Active' : 'Inactive'}
+                {r.isActive ? 'Đang bán' : 'Đã ẩn'}
               </span>
             ),
           },
-          { key: 'date', header: 'Created', cell: (r: any) => <span className="text-xs">{formatDate(r.createdAt)}</span> },
+          { key: 'date', header: 'Ngày tạo', cell: (r: any) => <span className="text-xs">{formatDate(r.createdAt)}</span> },
           {
             key: 'actions', header: '', className: 'text-right w-24',
             cell: (r: any) => (
               <div className="flex justify-end gap-1">
-                <Button asChild variant="ghost" size="icon" aria-label="Edit">
+                <Button asChild variant="ghost" size="icon" aria-label="Sửa">
                   <Link href={`/dashboard/admin/products/${r.id}`}><Edit className="h-4 w-4" /></Link>
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => remove(r.id)} aria-label="Delete">
+                <Button variant="ghost" size="icon" onClick={() => remove(r.id)} aria-label="Xóa">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

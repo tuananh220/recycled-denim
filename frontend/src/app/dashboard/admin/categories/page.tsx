@@ -12,7 +12,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
 
-function slugify(s: string) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function slugify(s: string) {
+  return s.toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
 
 export default function AdminCategoriesPage() {
   const [rows, setRows] = useState<any[]>([]);
@@ -26,41 +31,41 @@ export default function AdminCategoriesPage() {
   useEffect(() => { load(); }, []);
 
   async function onCreate(v: any) {
-    try { await api.post('/categories', v); toast.success('Category created'); reset(); setOpen(false); load(); }
-    catch (e: any) { toast.error(e?.response?.data?.message || 'Failed'); }
+    try { await api.post('/categories', v); toast.success('Đã tạo danh mục'); reset(); setOpen(false); load(); }
+    catch (e: any) { toast.error(e?.response?.data?.message || 'Thất bại'); }
   }
 
   async function remove(id: string) {
-    if (!confirm('Delete this category?')) return;
-    try { await api.delete(`/categories/${id}`); toast.success('Deleted'); load(); }
-    catch { toast.error('Cannot delete (products may still reference it)'); }
+    if (!confirm('Xóa danh mục này?')) return;
+    try { await api.delete(`/categories/${id}`); toast.success('Đã xóa'); load(); }
+    catch { toast.error('Không xóa được (vẫn còn sản phẩm)'); }
   }
 
   return (
-    <AdminShell allow={['ADMIN']} title="Categories" description="Organize the catalog."
+    <AdminShell allow={['ADMIN']} title="Danh mục" description="Phân loại sản phẩm."
       actions={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4" /> New category</Button>
+            <Button><Plus className="h-4 w-4" /> Danh mục mới</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>New category</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Danh mục mới</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
-              <div><Label className="mb-1.5 block">Name</Label><Input {...register('name', { required: true })} /></div>
+              <div><Label className="mb-1.5 block">Tên</Label><Input {...register('name', { required: true })} /></div>
               <div><Label className="mb-1.5 block">Slug</Label><Input {...register('slug', { required: true })} /></div>
-              <div><Label className="mb-1.5 block">Description</Label><Textarea rows={3} {...register('description')} /></div>
-              <Button className="w-full">Create</Button>
+              <div><Label className="mb-1.5 block">Mô tả</Label><Textarea rows={3} {...register('description')} /></div>
+              <Button className="w-full">Tạo</Button>
             </form>
           </DialogContent>
         </Dialog>
       }>
       <DataTable
         rows={rows}
-        empty="No categories yet."
+        empty="Chưa có danh mục."
         columns={[
-          { key: 'name', header: 'Name', cell: (r: any) => <span className="font-medium">{r.name}</span> },
+          { key: 'name', header: 'Tên',  cell: (r: any) => <span className="font-medium">{r.name}</span> },
           { key: 'slug', header: 'Slug', cell: (r: any) => <span className="font-mono text-xs">/{r.slug}</span> },
-          { key: 'desc', header: 'Description', cell: (r: any) => <span className="text-xs text-muted-foreground">{r.description ?? '—'}</span> },
+          { key: 'desc', header: 'Mô tả', cell: (r: any) => <span className="text-xs text-muted-foreground">{r.description ?? '—'}</span> },
           {
             key: 'actions', header: '', className: 'text-right w-16',
             cell: (r: any) => <Button variant="ghost" size="icon" onClick={() => remove(r.id)}><Trash2 className="h-4 w-4" /></Button>,

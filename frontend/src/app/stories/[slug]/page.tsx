@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const p = await getPost(slug);
   return {
-    title: p?.metaTitle ?? p?.title ?? 'Story',
+    title: p?.metaTitle ?? p?.title ?? 'Câu chuyện',
     description: p?.metaDescription ?? p?.excerpt,
     openGraph: { images: p?.coverImageUrl ? [p.coverImageUrl] : [] },
   };
@@ -32,6 +32,7 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
     image: [post.coverImageUrl],
     datePublished: post.publishedAt,
     author: { '@type': 'Person', name: post.author?.name },
+    inLanguage: 'vi-VN',
   };
 
   return (
@@ -39,7 +40,6 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <article>
-        {/* Hero */}
         <header className="relative h-[60vh] min-h-[420px] overflow-hidden">
           <Image src={post.coverImageUrl} alt={post.title} fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-indigo-950/40" />
@@ -52,13 +52,14 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
           </div>
         </header>
 
-        {/* Content */}
         <div className="container py-16 max-w-2xl">
           <Markdown content={post.content} />
         </div>
 
         <div className="container pb-24 max-w-2xl">
-          <Link href="/stories" className="text-xs uppercase tracking-widest hover:text-denim-rust">← Back to journal</Link>
+          <Link href="/stories" className="text-xs uppercase tracking-widest hover:text-denim-rust">
+            ← Quay lại tạp chí
+          </Link>
         </div>
       </article>
     </>

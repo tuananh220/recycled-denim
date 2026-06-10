@@ -11,6 +11,10 @@ import { useAuth, type Role } from '@/store/auth';
 import { formatDate } from '@/lib/utils';
 
 const ROLES: Role[] = ['CUSTOMER', 'ADMIN', 'STAFF', 'DESIGNER', 'WAREHOUSE'];
+const ROLE_VI: Record<string, string> = {
+  CUSTOMER: 'Khách hàng', ADMIN: 'Admin', STAFF: 'Nhân viên',
+  DESIGNER: 'Designer', WAREHOUSE: 'Kho',
+};
 
 export default function AdminUsersPage() {
   const [rows, setRows] = useState<any[]>([]);
@@ -20,42 +24,42 @@ export default function AdminUsersPage() {
   useEffect(() => { load(); }, []);
 
   async function setRole(id: string, role: Role) {
-    try { await api.patch(`/users/${id}/role`, { role }); toast.success('Role updated'); load(); }
-    catch { toast.error('Failed'); }
+    try { await api.patch(`/users/${id}/role`, { role }); toast.success('Đã cập nhật vai trò'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   async function remove(id: string) {
-    if (!confirm('Delete this user permanently?')) return;
-    try { await api.delete(`/users/${id}`); toast.success('Deleted'); load(); }
-    catch { toast.error('Failed'); }
+    if (!confirm('Xóa người dùng này vĩnh viễn?')) return;
+    try { await api.delete(`/users/${id}`); toast.success('Đã xóa'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   return (
-    <AdminShell allow={['ADMIN']} title="Users" description="Manage accounts and roles.">
+    <AdminShell allow={['ADMIN']} title="Người dùng" description="Quản lý tài khoản và vai trò.">
       <DataTable
         rows={rows}
-        empty="No users."
+        empty="Chưa có user nào."
         columns={[
-          { key: 'name', header: 'Name', cell: (r: any) => <span className="font-medium">{r.name}</span> },
+          { key: 'name', header: 'Họ tên', cell: (r: any) => <span className="font-medium">{r.name}</span> },
           { key: 'email', header: 'Email', cell: (r: any) => r.email },
           {
-            key: 'role', header: 'Role', className: 'w-44',
+            key: 'role', header: 'Vai trò', className: 'w-44',
             cell: (r: any) => (
               <Select value={r.role} onValueChange={(v) => setRole(r.id, v as Role)} disabled={r.id === me?.id}>
                 <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                <SelectContent>{ROLES.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}</SelectContent>
+                <SelectContent>{ROLES.map((x) => <SelectItem key={x} value={x}>{ROLE_VI[x]}</SelectItem>)}</SelectContent>
               </Select>
             ),
           },
           {
-            key: 'verified', header: 'Email', className: 'w-20',
+            key: 'verified', header: 'Email', className: 'w-24',
             cell: (r: any) => (
               <span className={`text-xs px-2 py-0.5 ${r.emailVerified ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-muted text-muted-foreground'}`}>
-                {r.emailVerified ? '✓' : 'Pending'}
+                {r.emailVerified ? 'Đã XN' : 'Chưa XN'}
               </span>
             ),
           },
-          { key: 'date', header: 'Joined', cell: (r: any) => <span className="text-xs">{formatDate(r.createdAt)}</span> },
+          { key: 'date', header: 'Tham gia', cell: (r: any) => <span className="text-xs">{formatDate(r.createdAt)}</span> },
           {
             key: 'actions', header: '', className: 'text-right w-16',
             cell: (r: any) => (

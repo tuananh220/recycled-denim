@@ -24,7 +24,7 @@ async function fetchCategories() {
   } catch { return []; }
 }
 
-export const metadata = { title: 'Shop' };
+export const metadata = { title: 'Cửa hàng' };
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const sp = await searchParams;
@@ -33,16 +33,19 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   return (
     <div className="container py-12">
       <header className="mb-12">
-        <p className="text-xs uppercase tracking-widest text-denim-rust">Collection</p>
-        <h1 className="text-5xl mt-2">All denim</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{products.meta?.total ?? 0} pieces, all responsibly made.</p>
+        <p className="text-xs uppercase tracking-widest text-denim-rust">Bộ sưu tập</p>
+        <h1 className="text-5xl mt-2 font-serif">Tất cả sản phẩm</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {products.meta?.total ?? 0} sản phẩm — mỗi cái là 1-of-1, không có cái thứ hai.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
-        {/* SIDEBAR FILTERS */}
         <aside className="space-y-8 text-sm">
-          <FilterGroup title="Category">
-            <Link href="/shop" className={!sp.category ? 'font-medium' : 'text-muted-foreground'}>All</Link>
+          <FilterGroup title="Danh mục">
+            <Link href="/shop" className={!sp.category ? 'font-medium' : 'text-muted-foreground'}>
+              Tất cả
+            </Link>
             {categories.map((c: any) => (
               <Link key={c.id} href={`/shop?category=${c.slug}`}
                 className={sp.category === c.slug ? 'font-medium' : 'text-muted-foreground'}>
@@ -51,11 +54,11 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             ))}
           </FilterGroup>
 
-          <FilterGroup title="Sort">
+          <FilterGroup title="Sắp xếp">
             {[
-              ['Newest', ''],
-              ['Price ↑', 'price_asc'],
-              ['Price ↓', 'price_desc'],
+              ['Mới nhất', ''],
+              ['Giá thấp → cao', 'price_asc'],
+              ['Giá cao → thấp', 'price_desc'],
             ].map(([label, val]) => {
               const params = new URLSearchParams(sp as any);
               if (val) params.set('sort', val); else params.delete('sort');
@@ -68,15 +71,15 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
             })}
           </FilterGroup>
 
-          <FilterGroup title="Size">
+          <FilterGroup title="Kích cỡ">
             <div className="flex flex-wrap gap-2">
-              {['XS','S','M','L','XL'].map(s => {
+              {['XS', 'S', 'M', 'L', 'XL', 'Free'].map(s => {
                 const params = new URLSearchParams(sp as any);
                 params.set('size', s);
                 const active = sp.size === s;
                 return (
                   <Link key={s} href={`/shop?${params}`}
-                    className={`h-9 w-9 grid place-items-center border ${active ? 'bg-indigo-900 text-denim-ecru border-indigo-900' : 'border-border'}`}>
+                    className={`h-9 px-2 grid place-items-center border text-xs ${active ? 'bg-indigo-900 text-denim-ecru border-indigo-900' : 'border-border'}`}>
                     {s}
                   </Link>
                 );
@@ -85,9 +88,12 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
           </FilterGroup>
         </aside>
 
-        {/* GRID */}
         <section className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12">
-          {products.data?.length === 0 && Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+          {products.data?.length === 0 && (
+            <div className="col-span-full text-center py-24 text-muted-foreground text-sm">
+              Chưa có sản phẩm nào. Quay lại sớm nhé!
+            </div>
+          )}
           {products.data?.map((p: any) => (
             <ProductCard
               key={p.id} slug={p.slug} name={p.name}

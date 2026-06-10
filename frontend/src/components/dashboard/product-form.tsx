@@ -15,13 +15,15 @@ interface FormValues {
   name: string; slug: string; description: string;
   price: number; compareAtPrice?: number;
   recycledPercent: number; categoryId: string;
-  sizes: string;  // comma separated
-  colors: string; // comma separated hex
+  sizes: string; colors: string;
   isActive: boolean; isFeatured: boolean;
 }
 
 function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return s.toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // strip Vietnamese accents
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 export function ProductForm({ productId }: { productId?: string }) {
@@ -34,8 +36,8 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   const { register, handleSubmit, setValue, watch, reset } = useForm<FormValues>({
     defaultValues: {
-      recycledPercent: 85, isActive: true, isFeatured: false,
-      sizes: 'XS,S,M,L,XL', colors: '#1f3a5f,#0f2540',
+      recycledPercent: 90, isActive: true, isFeatured: false,
+      sizes: 'Free', colors: '#1f3a5f,#0f2540',
     },
   });
   const nameVal = watch('name');
@@ -54,10 +56,9 @@ export function ProductForm({ productId }: { productId?: string }) {
         isActive: data.isActive, isFeatured: data.isFeatured,
       });
       setImages(data.images?.map((i: any) => i.url) ?? []);
-    }).catch(() => toast.error('Failed to load')).finally(() => setLoading(false));
+    }).catch(() => toast.error('Không tải được')).finally(() => setLoading(false));
   }, [productId, isEdit, reset]);
 
-  // Auto-generate slug for new products
   useEffect(() => {
     if (!isEdit && nameVal) setValue('slug', slugify(nameVal));
   }, [nameVal, isEdit, setValue]);
@@ -78,14 +79,14 @@ export function ProductForm({ productId }: { productId?: string }) {
       };
       if (isEdit) {
         await api.patch(`/products/${productId}`, payload);
-        toast.success('Product updated');
+        toast.success('Đã cập nhật sản phẩm');
       } else {
         await api.post('/products', payload);
-        toast.success('Product created');
+        toast.success('Đã tạo sản phẩm');
       }
       router.push('/dashboard/admin/products');
     } catch (e: any) {
-      toast.error(e?.response?.data?.message || 'Save failed');
+      toast.error(e?.response?.data?.message || 'Lưu thất bại');
     } finally { setSaving(false); }
   }
 
@@ -93,48 +94,48 @@ export function ProductForm({ productId }: { productId?: string }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
-      {/* Images */}
       <section>
-        <Label className="mb-2 block">Images</Label>
-        <ImageUploader value={images} onChange={setImages} folder="indigo/products" />
-        <p className="text-xs text-muted-foreground mt-2">First image becomes the thumbnail. Drag-and-drop coming soon.</p>
+        <Label className="mb-2 block">Hình ảnh</Label>
+        <ImageUploader value={images} onChange={setImages} folder="echove/products" />
+        <p className="text-xs text-muted-foreground mt-2">Ảnh đầu tiên sẽ làm thumbnail.</p>
       </section>
 
-      {/* Basics */}
       <section className="grid sm:grid-cols-2 gap-4">
-        <Field label="Name"><Input {...register('name', { required: true })} /></Field>
+        <Field label="Tên sản phẩm"><Input {...register('name', { required: true })} /></Field>
         <Field label="Slug (URL)"><Input {...register('slug', { required: true })} /></Field>
-        <Field label="Description" full><Textarea rows={4} {...register('description', { required: true })} /></Field>
-        <Field label="Price (USD)"><Input type="number" step="0.01" {...register('price', { required: true, valueAsNumber: true })} /></Field>
-        <Field label="Compare-at price"><Input type="number" step="0.01" {...register('compareAtPrice', { valueAsNumber: true })} /></Field>
-        <Field label="Category">
+        <Field label="Mô tả" full><Textarea rows={4} {...register('description', { required: true })} /></Field>
+        <Field label="Giá (VNĐ)"><Input type="number" step="1000" {...register('price', { required: true, valueAsNumber: true })} placeholder="350000" /></Field>
+        <Field label="Giá gốc (so sánh)"><Input type="number" step="1000" {...register('compareAtPrice', { valueAsNumber: true })} placeholder="Tùy chọn" /></Field>
+        <Field label="Danh mục">
           <Select onValueChange={(v) => setValue('categoryId', v)} value={watch('categoryId') || ''}>
-            <SelectTrigger><SelectValue placeholder="Choose…" /></SelectTrigger>
+            <SelectTrigger><SelectValue placeholder="Chọn…" /></SelectTrigger>
             <SelectContent>{categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
           </Select>
         </Field>
-        <Field label="Recycled %"><Input type="number" min={0} max={100} {...register('recycledPercent', { valueAsNumber: true })} /></Field>
+        <Field label="% Tái chế"><Input type="number" min={0} max={100} {...register('recycledPercent', { valueAsNumber: true })} /></Field>
       </section>
 
-      {/* Variants */}
       <section className="grid sm:grid-cols-2 gap-4">
-        <Field label="Sizes (comma separated)"><Input {...register('sizes')} placeholder="XS,S,M,L,XL" /></Field>
-        <Field label="Colors (hex, comma separated)"><Input {...register('colors')} placeholder="#1f3a5f,#0f2540" /></Field>
+        <Field label="Sizes (cách bằng dấu phẩy)"><Input {...register('sizes')} placeholder="Free  hoặc  S,M,L,XL" /></Field>
+        <Field label="Màu sắc (hex, cách bằng dấu phẩy)"><Input {...register('colors')} placeholder="#1f3a5f,#0f2540" /></Field>
       </section>
 
-      {/* Flags */}
       <section className="flex gap-6">
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...register('isActive')} className="h-4 w-4" /> Active (visible in shop)
+          <input type="checkbox" {...register('isActive')} className="h-4 w-4" /> Đang bán (hiện trên shop)
         </label>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...register('isFeatured')} className="h-4 w-4" /> Featured on home
+          <input type="checkbox" {...register('isFeatured')} className="h-4 w-4" /> Sản phẩm nổi bật (trang chủ)
         </label>
       </section>
 
       <div className="flex gap-3 pt-4 border-t border-border">
-        <Button type="submit" size="lg" disabled={saving}>{saving ? 'Saving…' : isEdit ? 'Update product' : 'Create product'}</Button>
-        <Button type="button" variant="outline" size="lg" onClick={() => router.push('/dashboard/admin/products')}>Cancel</Button>
+        <Button type="submit" size="lg" disabled={saving}>
+          {saving ? 'Đang lưu…' : isEdit ? 'Cập nhật' : 'Tạo sản phẩm'}
+        </Button>
+        <Button type="button" variant="outline" size="lg" onClick={() => router.push('/dashboard/admin/products')}>
+          Hủy
+        </Button>
       </div>
     </form>
   );

@@ -12,19 +12,19 @@ import { cn } from '@/lib/utils';
 interface NavItem { href: string; label: string; icon: any; roles: Role[]; }
 
 const NAV: NavItem[] = [
-  { href: '/dashboard/admin', label: 'Overview', icon: LayoutDashboard, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/products', label: 'Products', icon: Package, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/categories', label: 'Categories', icon: Tags, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/orders', label: 'Orders', icon: Receipt, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/users', label: 'Users', icon: Users, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/coupons', label: 'Coupons', icon: Ticket, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/banners', label: 'Banners', icon: ImgIcon, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/posts', label: 'Stories', icon: BookOpen, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/faq', label: 'FAQ', icon: HelpCircle, roles: ['ADMIN'] },
-  { href: '/dashboard/admin/tryon', label: 'AI Try-on log', icon: Sparkles, roles: ['ADMIN'] },
-  { href: '/dashboard/staff', label: 'Order processing', icon: Receipt, roles: ['STAFF'] },
-  { href: '/dashboard/designer', label: 'Design queue', icon: Palette, roles: ['DESIGNER'] },
-  { href: '/dashboard/warehouse', label: 'Inventory', icon: Warehouse, roles: ['WAREHOUSE'] },
+  { href: '/dashboard/admin',            label: 'Tổng quan',         icon: LayoutDashboard, roles: ['ADMIN'] },
+  { href: '/dashboard/admin/products',   label: 'Sản phẩm',          icon: Package,         roles: ['ADMIN'] },
+  { href: '/dashboard/admin/categories', label: 'Danh mục',          icon: Tags,            roles: ['ADMIN'] },
+  { href: '/dashboard/admin/orders',     label: 'Đơn hàng',          icon: Receipt,         roles: ['ADMIN'] },
+  { href: '/dashboard/admin/users',      label: 'Người dùng',        icon: Users,           roles: ['ADMIN'] },
+  { href: '/dashboard/admin/coupons',    label: 'Mã giảm giá',       icon: Ticket,          roles: ['ADMIN'] },
+  { href: '/dashboard/admin/banners',    label: 'Banner',            icon: ImgIcon,         roles: ['ADMIN'] },
+  { href: '/dashboard/admin/posts',      label: 'Bài viết',          icon: BookOpen,        roles: ['ADMIN'] },
+  { href: '/dashboard/admin/faq',        label: 'FAQ',               icon: HelpCircle,      roles: ['ADMIN'] },
+  { href: '/dashboard/admin/tryon',      label: 'Lịch sử AI Try-on', icon: Sparkles,        roles: ['ADMIN'] },
+  { href: '/dashboard/staff',            label: 'Xử lý đơn hàng',    icon: Receipt,         roles: ['STAFF'] },
+  { href: '/dashboard/designer',         label: 'Hàng chờ thiết kế', icon: Palette,         roles: ['DESIGNER'] },
+  { href: '/dashboard/warehouse',        label: 'Quản lý kho',       icon: Warehouse,       roles: ['WAREHOUSE'] },
 ];
 
 export function AdminShell({
@@ -47,7 +47,7 @@ export function AdminShell({
     if (!allow.includes(user.role)) router.push('/account');
   }, [hydrated, user, allow, router]);
 
-  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Loading…</div>;
+  if (!hydrated) return <div className="container py-24 text-center text-muted-foreground">Đang tải…</div>;
   if (!user || !allow.includes(user.role)) return null;
 
   const items = NAV.filter((n) => n.roles.includes(user.role));
@@ -57,7 +57,7 @@ export function AdminShell({
       <aside className="hidden lg:block border-r border-border bg-muted/30">
         <div className="sticky top-16 p-6 space-y-6">
           <Link href="/" className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="h-3 w-3" /> Back to store
+            <ChevronLeft className="h-3 w-3" /> Quay về cửa hàng
           </Link>
           <div>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{user.role}</p>

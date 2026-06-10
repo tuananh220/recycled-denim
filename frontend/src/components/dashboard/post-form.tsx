@@ -14,11 +14,15 @@ import { api } from '@/lib/api';
 
 interface FormValues {
   title: string; slug: string; excerpt: string; content: string;
-  tags: string;
-  status: 'DRAFT' | 'PUBLISHED';
+  tags: string; status: 'DRAFT' | 'PUBLISHED';
 }
 
-function slugify(s: string) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function slugify(s: string) {
+  return s.toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
 
 export function PostForm({ postId }: { postId?: string }) {
   const router = useRouter();
@@ -50,19 +54,18 @@ export function PostForm({ postId }: { postId?: string }) {
   }, [postId, isEdit, reset]);
 
   async function onSubmit(v: FormValues) {
-    if (cover.length === 0) { toast.error('Add a cover image'); return; }
+    if (cover.length === 0) { toast.error('Thêm ảnh bìa'); return; }
     setSaving(true);
     try {
       const payload = {
-        ...v,
-        coverImageUrl: cover[0],
+        ...v, coverImageUrl: cover[0],
         tags: v.tags.split(',').map((t) => t.trim()).filter(Boolean),
       };
       if (isEdit) await api.patch(`/posts/${postId}`, payload);
       else await api.post('/posts', payload);
-      toast.success(isEdit ? 'Updated' : 'Created');
+      toast.success(isEdit ? 'Đã cập nhật' : 'Đã tạo');
       router.push('/dashboard/admin/posts');
-    } catch (e: any) { toast.error(e?.response?.data?.message || 'Save failed'); }
+    } catch (e: any) { toast.error(e?.response?.data?.message || 'Lưu thất bại'); }
     finally { setSaving(false); }
   }
 
@@ -71,43 +74,43 @@ export function PostForm({ postId }: { postId?: string }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
       <section>
-        <Label className="mb-2 block">Cover image</Label>
-        <ImageUploader value={cover} onChange={setCover} multiple={false} folder="indigo/posts" />
+        <Label className="mb-2 block">Ảnh bìa</Label>
+        <ImageUploader value={cover} onChange={setCover} multiple={false} folder="echove/posts" />
       </section>
 
       <section className="grid sm:grid-cols-2 gap-4">
-        <div className="sm:col-span-2"><Label className="mb-1.5 block">Title</Label><Input {...register('title', { required: true })} /></div>
+        <div className="sm:col-span-2"><Label className="mb-1.5 block">Tiêu đề</Label><Input {...register('title', { required: true })} /></div>
         <div><Label className="mb-1.5 block">Slug</Label><Input {...register('slug', { required: true })} /></div>
         <div>
-          <Label className="mb-1.5 block">Status</Label>
+          <Label className="mb-1.5 block">Trạng thái</Label>
           <Select value={watch('status')} onValueChange={(v) => setValue('status', v as any)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="DRAFT">Draft</SelectItem>
-              <SelectItem value="PUBLISHED">Published</SelectItem>
+              <SelectItem value="DRAFT">Bản nháp</SelectItem>
+              <SelectItem value="PUBLISHED">Đã đăng</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div className="sm:col-span-2"><Label className="mb-1.5 block">Excerpt</Label><Textarea rows={2} {...register('excerpt', { required: true })} /></div>
-        <div className="sm:col-span-2"><Label className="mb-1.5 block">Tags (comma separated)</Label><Input {...register('tags')} placeholder="Sustainability,Craft" /></div>
+        <div className="sm:col-span-2"><Label className="mb-1.5 block">Tóm tắt</Label><Textarea rows={2} {...register('excerpt', { required: true })} /></div>
+        <div className="sm:col-span-2"><Label className="mb-1.5 block">Tags (cách bằng dấu phẩy)</Label><Input {...register('tags')} placeholder="Bền vững,Câu chuyện" /></div>
       </section>
 
       <section>
         <div className="flex items-center justify-between mb-2">
-          <Label>Content (Markdown)</Label>
+          <Label>Nội dung (Markdown)</Label>
           <button type="button" onClick={() => setPreview(!preview)} className="text-xs underline hover:text-denim-rust">
-            {preview ? 'Edit' : 'Preview'}
+            {preview ? 'Sửa' : 'Xem trước'}
           </button>
         </div>
         {preview
           ? <div className="border border-border p-6 min-h-[400px]"><Markdown content={content || ''} /></div>
-          : <Textarea rows={18} className="font-mono text-sm" {...register('content', { required: true })} placeholder="# Heading&#10;&#10;Body…" />
+          : <Textarea rows={18} className="font-mono text-sm" {...register('content', { required: true })} placeholder="# Tiêu đề&#10;&#10;Nội dung…" />
         }
       </section>
 
       <div className="flex gap-3 pt-4 border-t border-border">
-        <Button type="submit" size="lg" disabled={saving}>{saving ? 'Saving…' : isEdit ? 'Update' : 'Create'}</Button>
-        <Button type="button" variant="outline" size="lg" onClick={() => router.push('/dashboard/admin/posts')}>Cancel</Button>
+        <Button type="submit" size="lg" disabled={saving}>{saving ? 'Đang lưu…' : isEdit ? 'Cập nhật' : 'Tạo bài'}</Button>
+        <Button type="button" variant="outline" size="lg" onClick={() => router.push('/dashboard/admin/posts')}>Hủy</Button>
       </div>
     </form>
   );

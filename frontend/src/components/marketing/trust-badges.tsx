@@ -1,10 +1,10 @@
 import { Truck, RotateCcw, Leaf, Lock } from 'lucide-react';
 
 const items = [
-  { Icon: Truck, title: 'Free shipping', desc: 'On orders over $200' },
-  { Icon: RotateCcw, title: '60-day returns', desc: 'No questions asked' },
-  { Icon: Leaf, title: 'Climate neutral', desc: 'Certified offset' },
-  { Icon: Lock, title: 'Secure checkout', desc: 'SSL · Stripe · PayPal' },
+  { Icon: Truck,    title: 'Miễn phí vận chuyển', desc: 'Cho đơn hàng từ 500.000 VNĐ' },
+  { Icon: RotateCcw, title: 'Đổi trả 14 ngày',    desc: 'Không cần lý do' },
+  { Icon: Leaf,     title: '100% Tái chế',         desc: 'Take-back nhận voucher 100k' },
+  { Icon: Lock,     title: 'Thanh toán an toàn',   desc: 'SSL · COD · Momo · VNPay' },
 ];
 
 export function TrustBadges() {

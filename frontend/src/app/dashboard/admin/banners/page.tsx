@@ -27,47 +27,47 @@ export default function AdminBannersPage() {
   useEffect(() => { load(); }, []);
 
   async function onCreate(v: FormValues) {
-    if (img.length === 0) { toast.error('Add a banner image'); return; }
+    if (img.length === 0) { toast.error('Thêm ảnh banner'); return; }
     try {
       await api.post('/banners', { ...v, imageUrl: img[0], isActive: true, position: Number(v.position) || 0 });
-      toast.success('Banner created'); reset(); setImg([]); setOpen(false); load();
-    } catch (e: any) { toast.error(e?.response?.data?.message || 'Failed'); }
+      toast.success('Đã tạo banner'); reset(); setImg([]); setOpen(false); load();
+    } catch (e: any) { toast.error(e?.response?.data?.message || 'Thất bại'); }
   }
 
   async function toggleActive(b: any) {
     try { await api.patch(`/banners/${b.id}`, { isActive: !b.isActive }); load(); }
-    catch { toast.error('Failed'); }
+    catch { toast.error('Thất bại'); }
   }
 
   async function remove(id: string) {
-    if (!confirm('Delete banner?')) return;
-    try { await api.delete(`/banners/${id}`); toast.success('Deleted'); load(); }
-    catch { toast.error('Failed'); }
+    if (!confirm('Xóa banner?')) return;
+    try { await api.delete(`/banners/${id}`); toast.success('Đã xóa'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   return (
-    <AdminShell allow={['ADMIN']} title="Banners" description="Hero promos and storefront announcements."
+    <AdminShell allow={['ADMIN']} title="Banner" description="Banner trang chủ & quảng cáo."
       actions={
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4" /> New banner</Button></DialogTrigger>
+          <DialogTrigger asChild><Button><Plus className="h-4 w-4" /> Banner mới</Button></DialogTrigger>
           <DialogContent className="max-w-xl">
-            <DialogHeader><DialogTitle>New banner</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>Banner mới</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
-              <div><Label className="mb-1.5 block">Image</Label><ImageUploader value={img} onChange={setImg} multiple={false} folder="indigo/banners" /></div>
-              <div><Label className="mb-1.5 block">Title</Label><Input {...register('title', { required: true })} /></div>
-              <div><Label className="mb-1.5 block">Subtitle</Label><Textarea rows={2} {...register('subtitle')} /></div>
+              <div><Label className="mb-1.5 block">Ảnh</Label><ImageUploader value={img} onChange={setImg} multiple={false} folder="echove/banners" /></div>
+              <div><Label className="mb-1.5 block">Tiêu đề</Label><Input {...register('title', { required: true })} /></div>
+              <div><Label className="mb-1.5 block">Phụ đề</Label><Textarea rows={2} {...register('subtitle')} /></div>
               <div className="grid grid-cols-2 gap-3">
-                <div><Label className="mb-1.5 block">CTA text</Label><Input {...register('ctaText')} placeholder="Shop now" /></div>
-                <div><Label className="mb-1.5 block">CTA URL</Label><Input {...register('ctaUrl')} placeholder="/shop" /></div>
+                <div><Label className="mb-1.5 block">Text nút CTA</Label><Input {...register('ctaText')} placeholder="Mua ngay" /></div>
+                <div><Label className="mb-1.5 block">Link CTA</Label><Input {...register('ctaUrl')} placeholder="/shop" /></div>
               </div>
-              <div><Label className="mb-1.5 block">Position</Label><Input type="number" {...register('position')} defaultValue={0} /></div>
-              <Button className="w-full">Create</Button>
+              <div><Label className="mb-1.5 block">Thứ tự hiển thị</Label><Input type="number" {...register('position')} defaultValue={0} /></div>
+              <Button className="w-full">Tạo</Button>
             </form>
           </DialogContent>
         </Dialog>
       }>
       {rows.length === 0 ? (
-        <div className="border border-border p-12 text-center text-sm text-muted-foreground">No banners yet.</div>
+        <div className="border border-border p-12 text-center text-sm text-muted-foreground">Chưa có banner nào.</div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {rows.map((b) => (
@@ -81,7 +81,7 @@ export default function AdminBannersPage() {
                 {b.subtitle && <p className="text-xs text-muted-foreground line-clamp-2">{b.subtitle}</p>}
                 <div className="flex justify-between items-center pt-2">
                   <Button size="sm" variant={b.isActive ? 'default' : 'outline'} onClick={() => toggleActive(b)}>
-                    {b.isActive ? 'Active' : 'Inactive'}
+                    {b.isActive ? 'Đang bật' : 'Đã tắt'}
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => remove(b.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>

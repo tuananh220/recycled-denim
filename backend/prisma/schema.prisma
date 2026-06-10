@@ -72,7 +72,7 @@ enum PostStatus {
 model User {
   id                String   @id @default(cuid())
   email             String   @unique
-  passwordHash      String?
+  passwordHash String?
   name              String
   phone             String?
   avatarUrl         String?
@@ -84,7 +84,7 @@ model User {
   refreshTokenHash  String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-
+  oauthAccounts  OAuthAccount[]
   addresses     Address[]
   orders        Order[]
   cart          Cart?
@@ -93,7 +93,6 @@ model User {
   tryOnRequests TryOnRequest[]
   designs       CustomDesign[]
   posts         Post[]
-  oauthAccounts OAuthAccount[]
 
   @@index([role])
 }

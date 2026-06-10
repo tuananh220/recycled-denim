@@ -16,21 +16,21 @@ export default function AdminPostsPage() {
   useEffect(() => { load(); }, []);
 
   async function remove(id: string) {
-    if (!confirm('Delete this post permanently?')) return;
-    try { await api.delete(`/posts/${id}`); toast.success('Deleted'); load(); }
-    catch { toast.error('Failed'); }
+    if (!confirm('Xóa bài viết này vĩnh viễn?')) return;
+    try { await api.delete(`/posts/${id}`); toast.success('Đã xóa'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   return (
     <AdminShell
       allow={['ADMIN']}
-      title="Stories"
-      description="Editorial content — blog & journal."
-      actions={<Button asChild><Link href="/dashboard/admin/posts/new"><Plus className="h-4 w-4" /> New story</Link></Button>}
+      title="Bài viết"
+      description="Tạp chí & câu chuyện thương hiệu."
+      actions={<Button asChild><Link href="/dashboard/admin/posts/new"><Plus className="h-4 w-4" /> Bài viết mới</Link></Button>}
     >
       <DataTable
         rows={rows}
-        empty="No stories yet."
+        empty="Chưa có bài viết nào."
         columns={[
           {
             key: 'thumb', header: '', className: 'w-20',
@@ -40,7 +40,7 @@ export default function AdminPostsPage() {
               : <div className="w-14 h-14 bg-muted" />,
           },
           {
-            key: 'title', header: 'Title',
+            key: 'title', header: 'Tiêu đề',
             cell: (r: any) => (
               <div>
                 <p className="font-medium">{r.title}</p>
@@ -50,14 +50,14 @@ export default function AdminPostsPage() {
           },
           { key: 'tags', header: 'Tags', cell: (r: any) => <span className="text-xs">{r.tags?.join(', ')}</span> },
           {
-            key: 'status', header: 'Status',
+            key: 'status', header: 'Trạng thái',
             cell: (r: any) => (
               <span className={`text-xs uppercase tracking-widest px-2 py-0.5 ${r.status === 'PUBLISHED' ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-muted'}`}>
-                {r.status}
+                {r.status === 'PUBLISHED' ? 'Đã đăng' : 'Bản nháp'}
               </span>
             ),
           },
-          { key: 'date', header: 'Updated', cell: (r: any) => <span className="text-xs">{formatDate(r.updatedAt)}</span> },
+          { key: 'date', header: 'Cập nhật', cell: (r: any) => <span className="text-xs">{formatDate(r.updatedAt)}</span> },
           {
             key: 'actions', header: '', className: 'text-right w-24',
             cell: (r: any) => (

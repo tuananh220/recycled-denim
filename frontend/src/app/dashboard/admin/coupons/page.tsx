@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { api } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface FormValues { code: string; type: 'PERCENT' | 'FIXED'; value: number; expiresAt?: string }
 
@@ -32,54 +32,57 @@ export default function AdminCouponsPage() {
         expiresAt: v.expiresAt ? new Date(v.expiresAt).toISOString() : undefined,
         isActive: true,
       });
-      toast.success('Coupon created'); reset({ type: 'PERCENT' }); setOpen(false); load();
-    } catch (e: any) { toast.error(e?.response?.data?.message || 'Failed'); }
+      toast.success('Đã tạo mã giảm giá'); reset({ type: 'PERCENT' }); setOpen(false); load();
+    } catch (e: any) { toast.error(e?.response?.data?.message || 'Thất bại'); }
   }
 
   async function remove(id: string) {
-    if (!confirm('Delete coupon?')) return;
-    try { await api.delete(`/coupons/${id}`); toast.success('Deleted'); load(); }
-    catch { toast.error('Failed'); }
+    if (!confirm('Xóa mã giảm giá?')) return;
+    try { await api.delete(`/coupons/${id}`); toast.success('Đã xóa'); load(); }
+    catch { toast.error('Thất bại'); }
   }
 
   return (
-    <AdminShell allow={['ADMIN']} title="Coupons" description="Discount codes." actions={
+    <AdminShell allow={['ADMIN']} title="Mã giảm giá" description="Quản lý voucher & coupon." actions={
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild><Button><Plus className="h-4 w-4" /> New coupon</Button></DialogTrigger>
+        <DialogTrigger asChild><Button><Plus className="h-4 w-4" /> Mã mới</Button></DialogTrigger>
         <DialogContent>
-          <DialogHeader><DialogTitle>New coupon</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Mã giảm giá mới</DialogTitle></DialogHeader>
           <form onSubmit={handleSubmit(onCreate)} className="space-y-4">
-            <div><Label className="mb-1.5 block">Code</Label><Input {...register('code', { required: true })} placeholder="SUMMER20" /></div>
+            <div><Label className="mb-1.5 block">Mã</Label><Input {...register('code', { required: true })} placeholder="SUMMER20" /></div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label className="mb-1.5 block">Type</Label>
+                <Label className="mb-1.5 block">Loại</Label>
                 <Select value={watch('type')} onValueChange={(v) => setValue('type', v as any)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="PERCENT">Percent (%)</SelectItem>
-                    <SelectItem value="FIXED">Fixed amount ($)</SelectItem>
+                    <SelectItem value="PERCENT">Phần trăm (%)</SelectItem>
+                    <SelectItem value="FIXED">Số tiền (VNĐ)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label className="mb-1.5 block">Value</Label><Input type="number" step="0.01" {...register('value', { required: true, valueAsNumber: true })} /></div>
+              <div><Label className="mb-1.5 block">Giá trị</Label><Input type="number" step="1000" {...register('value', { required: true, valueAsNumber: true })} /></div>
             </div>
-            <div><Label className="mb-1.5 block">Expires at (optional)</Label><Input type="date" {...register('expiresAt')} /></div>
-            <Button className="w-full">Create</Button>
+            <div><Label className="mb-1.5 block">Hết hạn (tùy chọn)</Label><Input type="date" {...register('expiresAt')} /></div>
+            <Button className="w-full">Tạo</Button>
           </form>
         </DialogContent>
       </Dialog>
     }>
       <DataTable
         rows={rows}
-        empty="No coupons yet."
+        empty="Chưa có mã giảm giá."
         columns={[
-          { key: 'code', header: 'Code', cell: (r: any) => <span className="font-mono font-medium">{r.code}</span> },
-          { key: 'type', header: 'Type', cell: (r: any) => r.type === 'PERCENT' ? `${r.value}%` : `$${r.value}` },
-          { key: 'uses', header: 'Uses', cell: (r: any) => r.uses },
-          { key: 'exp', header: 'Expires', cell: (r: any) => r.expiresAt ? formatDate(r.expiresAt) : 'Never' },
+          { key: 'code', header: 'Mã', cell: (r: any) => <span className="font-mono font-medium">{r.code}</span> },
           {
-            key: 'active', header: 'Active',
-            cell: (r: any) => <span className={`text-xs px-2 py-0.5 ${r.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-muted'}`}>{r.isActive ? 'Yes' : 'No'}</span>,
+            key: 'type', header: 'Giá trị',
+            cell: (r: any) => r.type === 'PERCENT' ? `${r.value}%` : formatCurrency(Number(r.value)),
+          },
+          { key: 'uses', header: 'Đã dùng', cell: (r: any) => r.uses },
+          { key: 'exp',  header: 'Hết hạn', cell: (r: any) => r.expiresAt ? formatDate(r.expiresAt) : 'Không' },
+          {
+            key: 'active', header: 'Trạng thái',
+            cell: (r: any) => <span className={`text-xs px-2 py-0.5 ${r.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' : 'bg-muted'}`}>{r.isActive ? 'Bật' : 'Tắt'}</span>,
           },
           { key: 'actions', header: '', className: 'text-right w-16',
             cell: (r: any) => <Button variant="ghost" size="icon" onClick={() => remove(r.id)}><Trash2 className="h-4 w-4" /></Button> },

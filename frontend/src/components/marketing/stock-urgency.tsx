@@ -11,7 +11,6 @@ export function StockUrgency({
 }) {
   const [viewers, setViewers] = useState<number | null>(null);
 
-  // Fake "X people are viewing" social proof — pseudo-random but stable per session
   useEffect(() => {
     setViewers(Math.floor(Math.random() * 12) + 5);
     const id = setInterval(() => {
@@ -27,17 +26,17 @@ export function StockUrgency({
     <div className="space-y-1.5 text-xs">
       {qty !== undefined && qty > 0 && qty <= 5 && (
         <p className="flex items-center gap-1.5 text-denim-rust font-medium animate-pulse">
-          <Flame className="h-3 w-3" /> Only {qty} left in size {size} — order soon
+          <Flame className="h-3 w-3" /> Chỉ còn {qty} sản phẩm size {size} — đặt ngay!
         </p>
       )}
       {qty === 0 && (
         <p className="flex items-center gap-1.5 text-muted-foreground">
-          Out of stock in this combination — try another size or color
+          Hết hàng — vui lòng chọn size hoặc màu khác
         </p>
       )}
       {viewers !== null && (
         <p className="flex items-center gap-1.5 text-muted-foreground">
-          <Eye className="h-3 w-3" /> {viewers} people are viewing this piece
+          <Eye className="h-3 w-3" /> {viewers} người đang xem sản phẩm này
         </p>
       )}
     </div>
