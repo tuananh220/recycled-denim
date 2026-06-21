@@ -1,13 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { OrderStatus, PaymentStatus, Prisma } from '@prisma/client';
+import { OrderStatus, PaymentProvider, PaymentStatus, Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CheckoutDto, UpdateOrderStatusDto } from './dto/order.dto';
+import { MailService } from '../mail/mail.service';
 
 const ord = (n: number) => n.toString().padStart(5, '0');
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mail: MailService,
+  ) {}
 
   async checkout(userId: string, dto: CheckoutDto) {
     const cart = await this.prisma.cart.findUnique({
@@ -57,11 +61,20 @@ export class OrdersService {
         notes: dto.notes ?? null,
         shippingAddress: dto.shippingAddress,
         items: { create: items },
-        payments: { create: { provider: dto.paymentProvider, amount: total, status: PaymentStatus.PENDING } },
+        payments: { create: { provider: dto.paymentProvider ?? PaymentProvider.COD, amount: total, status: PaymentStatus.PENDING } },
       },
-      include: { items: true, payments: true },
+      include: { items: true, payments: true, user: true },
     });
     await this.prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+
+    // Send order confirmation email for COD orders
+    const appliedProvider = dto.paymentProvider ?? PaymentProvider.COD;
+    if (appliedProvider === PaymentProvider.COD) {
+      this.mail.sendOrderConfirmation(order.user.email, order).catch(err => {
+        console.error('Failed to send order confirmation email:', err);
+      });
+    }
+
     return order;
   }
 
@@ -97,5 +110,32 @@ export class OrdersService {
       where: { id },
       data: { status: dto.status, trackingNumber: dto.trackingNumber ?? undefined },
     });
+  }
+
+  async cancel(userId: string, id: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+    });
+    if (!order) throw new NotFoundException('Đơn hàng không tồn tại');
+    if (order.userId !== userId) throw new BadRequestException('Bạn không có quyền hủy đơn hàng này');
+    if (order.status !== OrderStatus.PENDING) {
+      throw new BadRequestException('Chỉ có thể hủy đơn hàng khi trạng thái là Chờ xác nhận (PENDING)');
+    }
+
+    const updatedOrder = await this.prisma.order.update({
+      where: { id },
+      data: {
+        status: OrderStatus.CANCELLED,
+        paymentStatus: PaymentStatus.FAILED,
+      },
+      include: { items: true, payments: true, user: true },
+    });
+
+    // Send order cancellation email
+    this.mail.sendOrderCancellation(updatedOrder.user.email, updatedOrder).catch(err => {
+      console.error('Failed to send order cancellation email:', err);
+    });
+
+    return updatedOrder;
   }
 }

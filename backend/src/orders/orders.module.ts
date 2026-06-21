@@ -36,6 +36,11 @@ class OrdersController {
   setStatus(@Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.orders.updateStatus(id, dto);
   }
+
+  @Post(':id/cancel')
+  cancel(@CurrentUser('id') uid: string, @Param('id') id: string) {
+    return this.orders.cancel(uid, id);
+  }
 }
 
 @Module({ controllers: [OrdersController], providers: [OrdersService] })

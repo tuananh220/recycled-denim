@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Instagram, Facebook, Youtube, Mail, MapPin } from 'lucide-react';
 import { BRAND } from '@/lib/brand';
 
@@ -7,7 +8,15 @@ export function Footer() {
     <footer className="mt-24 border-t border-border bg-background">
       <div className="container py-16 grid gap-10 md:grid-cols-5">
         <div className="md:col-span-2">
-          <p className="font-serif text-2xl tracking-[0.3em]">{BRAND.nameDisplay}</p>
+          <Link href="/" className="inline-block mb-3">
+            <Image
+              src="/logo.png"
+              alt={BRAND.name}
+              width={140}
+              height={42}
+              className="h-10 w-auto object-contain dark:brightness-125"
+            />
+          </Link>
           <p className="mt-4 font-serif text-lg italic">"{BRAND.tagline}"</p>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs">{BRAND.mission}</p>
           <div className="flex gap-3 mt-6">

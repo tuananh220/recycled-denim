@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Heart, Moon, Search, ShoppingBag, Sun, User, Menu, X } from 'lucide-react';
@@ -29,7 +30,16 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 bg-background/90 backdrop-blur border-b border-border">
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="font-serif text-2xl tracking-[0.3em] font-semibold">{BRAND.nameDisplay}</Link>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt={BRAND.name}
+            width={120}
+            height={36}
+            className="h-8 w-auto object-contain dark:brightness-125"
+            priority
+          />
+        </Link>
 
         <nav className="hidden md:flex items-center gap-7 text-xs uppercase tracking-widest">
           {links.map((l) => (

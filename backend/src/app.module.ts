@@ -23,6 +23,7 @@ import { BannersModule } from './banners/banners.module';
 import { PostsModule } from './posts/posts.module';
 import { FaqModule } from './faq/faq.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { TestimonialsModule } from './testimonials/testimonials.module';
     PostsModule,
     FaqModule,
     TestimonialsModule,
+    ShippingModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
