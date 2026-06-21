@@ -101,7 +101,7 @@ export function AdminShell({
         <div className="p-6 lg:p-10 max-w-7xl">
           <div className="flex items-start justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-serif">{title}</h1>
+              <h1 className="text-3xl font-sans">{title}</h1>
               {description && <p className="text-sm text-muted-foreground mt-1">{description}</p>}
             </div>
             {actions && <div className="flex gap-2">{actions}</div>}

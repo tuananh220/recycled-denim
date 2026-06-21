@@ -35,7 +35,7 @@ function LoginInner() {
 
   return (
     <div className="container max-w-md py-16">
-      <h1 className="text-4xl mb-2 font-serif">Đăng nhập</h1>
+      <h1 className="text-4xl mb-2 font-sans">Đăng nhập</h1>
       <p className="text-sm text-muted-foreground mb-8">Chào mừng quay lại ECHOVE.</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

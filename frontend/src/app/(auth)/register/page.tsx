@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
   return (
     <div className="container max-w-md py-16">
-      <h1 className="text-4xl mb-2 font-serif">Tạo tài khoản</h1>
+      <h1 className="text-4xl mb-2 font-sans">Tạo tài khoản</h1>
       <p className="text-sm text-muted-foreground mb-8">Tham gia ECHOVE — Cũ người, chất ta.</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

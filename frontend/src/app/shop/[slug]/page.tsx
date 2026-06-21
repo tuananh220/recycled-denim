@@ -70,7 +70,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               <Badge className="border-denim-rust text-denim-rust">{product.recycledPercent}% Tái chế</Badge>
               <Badge className="border-indigo-900 text-indigo-900 dark:border-denim-ecru dark:text-denim-ecru">1-of-1</Badge>
             </div>
-            <h1 className="text-4xl md:text-5xl font-serif">{product.name}</h1>
+            <h1 className="text-4xl md:text-5xl font-sans">{product.name}</h1>
             <div className="flex items-baseline gap-3">
               <p className="text-2xl">{formatCurrency(Number(product.price))}</p>
               {product.compareAtPrice && (
@@ -95,7 +95,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
 
         <section className="mt-24">
-          <h2 className="text-3xl mb-6 font-serif">Đánh giá từ khách hàng</h2>
+          <h2 className="text-3xl mb-6 font-sans">Đánh giá từ khách hàng</h2>
           {product.reviews?.length === 0 ? (
             <p className="text-sm text-muted-foreground">Chưa có đánh giá nào — hãy là người đầu tiên.</p>
           ) : (
@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         {related?.length > 0 && (
           <section className="mt-24">
-            <h2 className="text-3xl mb-8 font-serif">Có thể bạn cũng thích</h2>
+            <h2 className="text-3xl mb-8 font-sans">Có thể bạn cũng thích</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
               {related.map((p: any) => (
                 <ProductCard key={p.id} slug={p.slug} name={p.name} price={p.price}

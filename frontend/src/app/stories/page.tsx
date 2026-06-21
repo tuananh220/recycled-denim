@@ -22,7 +22,7 @@ export default async function StoriesPage() {
   return (
     <div className="container py-16">
       <p className="text-xs uppercase tracking-widest text-denim-rust">Tạp chí</p>
-      <h1 className="font-serif text-5xl md:text-6xl mt-3 mb-12">Câu chuyện</h1>
+      <h1 className="font-sans text-5xl md:text-6xl mt-3 mb-12">Câu chuyện</h1>
 
       {posts.length === 0 ? (
         <p className="text-muted-foreground">Chưa có bài viết nào được xuất bản.</p>
@@ -39,7 +39,7 @@ export default async function StoriesPage() {
                   <div className="flex gap-2 text-[10px] uppercase tracking-widest text-denim-rust">
                     {hero.tags?.map((t: string) => <span key={t}>{t}</span>)}
                   </div>
-                  <h2 className="font-serif text-4xl md:text-5xl mt-3 group-hover:text-denim-rust transition-colors">{hero.title}</h2>
+                  <h2 className="font-sans text-4xl md:text-5xl mt-3 group-hover:text-denim-rust transition-colors">{hero.title}</h2>
                   <p className="mt-4 text-muted-foreground">{hero.excerpt}</p>
                   <p className="text-xs text-muted-foreground mt-6">{hero.author?.name} · {formatDate(hero.publishedAt)}</p>
                 </div>
@@ -59,7 +59,7 @@ export default async function StoriesPage() {
                     <div className="flex gap-2 text-[10px] uppercase tracking-widest text-denim-rust">
                       {p.tags?.slice(0, 2).map((t: string) => <span key={t}>{t}</span>)}
                     </div>
-                    <h3 className="font-serif text-2xl mt-2 group-hover:text-denim-rust transition-colors">{p.title}</h3>
+                    <h3 className="font-sans text-2xl mt-2 group-hover:text-denim-rust transition-colors">{p.title}</h3>
                     <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{p.excerpt}</p>
                     <p className="text-xs text-muted-foreground mt-3">{formatDate(p.publishedAt)}</p>
                   </div>

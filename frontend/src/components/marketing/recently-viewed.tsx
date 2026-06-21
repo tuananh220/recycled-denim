@@ -8,7 +8,7 @@ export function RecentlyViewed({ excludeId, title = 'Sản phẩm bạn vừa xe
 
   return (
     <section className="container py-16">
-      <h2 className="text-3xl mb-8 font-serif">{title}</h2>
+      <h2 className="text-3xl mb-8 font-sans">{title}</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-8">
         {items.slice(0, 6).map((p) => (
           <ProductCard

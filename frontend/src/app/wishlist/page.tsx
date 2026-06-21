@@ -36,7 +36,7 @@ export default function WishlistPage() {
 
   return (
     <div className="container py-12">
-      <h1 className="text-4xl mb-8 font-serif">Sản phẩm yêu thích</h1>
+      <h1 className="text-4xl mb-8 font-sans">Sản phẩm yêu thích</h1>
       {items.length === 0 && (
         <p className="text-muted-foreground">Bạn chưa lưu sản phẩm nào.</p>
       )}

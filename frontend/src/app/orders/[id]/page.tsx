@@ -52,7 +52,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     <div className="container py-12 max-w-3xl">
       <div className="flex items-center justify-between flex-wrap gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-4xl font-serif">{o.number}</h1>
+          <h1 className="text-4xl font-sans">{o.number}</h1>
           <p className="text-sm text-muted-foreground mt-1">Đặt ngày {formatDate(o.createdAt)}</p>
         </div>
         <div className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${

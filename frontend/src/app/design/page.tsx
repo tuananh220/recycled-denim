@@ -11,7 +11,7 @@ export default function DesignPage() {
     <div className="container py-12">
       <header className="mb-8 max-w-2xl">
         <p className="text-xs uppercase tracking-widest text-denim-rust">Studio Thiết kế</p>
-        <h1 className="text-5xl mt-2 font-serif">Thiết kế của riêng bạn</h1>
+        <h1 className="text-5xl mt-2 font-sans">Thiết kế của riêng bạn</h1>
         <p className="mt-3 text-muted-foreground">
           Kéo, thả, vẽ và thêm patch. Gửi bản nháp — designer ECHOVE sẽ refine và may tay cho bạn trong 7-10 ngày.
         </p>

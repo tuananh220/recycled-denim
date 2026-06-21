@@ -33,7 +33,7 @@ export default function OrdersPage() {
 
   return (
     <div className="container py-12 max-w-4xl">
-      <h1 className="text-4xl mb-8 font-serif">Đơn hàng của tôi</h1>
+      <h1 className="text-4xl mb-8 font-sans">Đơn hàng của tôi</h1>
       {orders.length === 0 && (
         <p className="text-sm text-muted-foreground">Bạn chưa có đơn hàng nào.</p>
       )}

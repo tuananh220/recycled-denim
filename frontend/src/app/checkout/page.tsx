@@ -104,7 +104,7 @@ export default function CheckoutPage() {
   return (
     <div className="container py-12 grid lg:grid-cols-[1fr_400px] gap-12">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <h1 className="text-4xl font-serif">Thanh toán</h1>
+        <h1 className="text-4xl font-sans">Thanh toán</h1>
 
         <section>
           <h2 className="text-xs uppercase tracking-widest mb-4">Thông tin giao hàng</h2>

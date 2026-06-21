@@ -70,7 +70,7 @@ export function QuickViewButton({ slug }: { slug: string }) {
                   <Badge className="border-denim-rust text-denim-rust w-fit">{product.recycledPercent}% Tái chế</Badge>
                   <Badge className="border-indigo-900 text-indigo-900 dark:border-denim-ecru dark:text-denim-ecru w-fit">1-of-1</Badge>
                 </div>
-                <h2 className="font-serif text-3xl mt-3">{product.name}</h2>
+                <h2 className="font-sans text-3xl mt-3">{product.name}</h2>
                 <p className="text-xl mt-1">{formatCurrency(Number(product.price))}</p>
                 <p className="text-xs text-muted-foreground mt-3 line-clamp-3">{product.description}</p>
 

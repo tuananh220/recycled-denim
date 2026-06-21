@@ -47,7 +47,7 @@ export default async function StoryDetail({ params }: { params: Promise<{ slug: 
             <div className="flex gap-2 text-[10px] uppercase tracking-widest opacity-80">
               {post.tags?.map((t: string) => <span key={t}>{t}</span>)}
             </div>
-            <h1 className="font-serif text-4xl md:text-6xl mt-4 max-w-3xl">{post.title}</h1>
+            <h1 className="font-sans text-4xl md:text-6xl mt-4 max-w-3xl">{post.title}</h1>
             <p className="text-xs uppercase tracking-widest mt-4 opacity-80">{post.author?.name} · {formatDate(post.publishedAt)}</p>
           </div>
         </header>

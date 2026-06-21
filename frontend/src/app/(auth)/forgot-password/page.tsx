@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="container max-w-md py-24">
-      <h1 className="text-4xl mb-2 font-serif">Quên mật khẩu</h1>
+      <h1 className="text-4xl mb-2 font-sans">Quên mật khẩu</h1>
       <p className="text-sm text-muted-foreground mb-8">
         Nhập email — chúng tôi sẽ gửi link đặt lại mật khẩu trong vài phút.
       </p>

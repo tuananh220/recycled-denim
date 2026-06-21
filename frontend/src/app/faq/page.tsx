@@ -40,7 +40,7 @@ export default async function FaqPage() {
 
       <section className="container py-16 max-w-3xl">
         <p className="text-xs uppercase tracking-widest text-denim-rust">Trợ giúp</p>
-        <h1 className="font-serif text-5xl md:text-6xl mt-3">Câu hỏi thường gặp.</h1>
+        <h1 className="font-sans text-5xl md:text-6xl mt-3">Câu hỏi thường gặp.</h1>
         <p className="mt-4 text-muted-foreground">
           Không tìm thấy câu trả lời? <Link href="/contact" className="underline hover:text-denim-rust">Liên hệ với chúng tôi</Link>.
         </p>

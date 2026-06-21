@@ -24,7 +24,7 @@ export default function ContactPage() {
     <div className="container py-16 grid lg:grid-cols-[1fr_360px] gap-12 max-w-5xl">
       <div>
         <p className="text-xs uppercase tracking-widest text-denim-rust">Liên hệ</p>
-        <h1 className="font-serif text-5xl mt-3 mb-8">Để lại lời nhắn.</h1>
+        <h1 className="font-sans text-5xl mt-3 mb-8">Để lại lời nhắn.</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-lg">
           <div className="grid sm:grid-cols-2 gap-4">
             <div><Label className="mb-1.5 block">Họ tên</Label><Input {...register('name', { required: true })} /></div>

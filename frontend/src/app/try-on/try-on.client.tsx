@@ -89,7 +89,7 @@ export function TryOnClient() {
     <div className="container py-12">
       <header className="mb-10 max-w-2xl">
         <p className="text-xs uppercase tracking-widest text-denim-rust">AI Studio</p>
-        <h1 className="text-5xl mt-2 font-serif">Thử đồ ảo</h1>
+        <h1 className="text-5xl mt-2 font-sans">Thử đồ ảo</h1>
         <p className="mt-3 text-muted-foreground">
           Tải ảnh của bạn (chụp đứng thẳng, ánh sáng tốt), chọn một item ECHOVE — AI sẽ thử cho bạn trong vài giây.
         </p>
@@ -155,7 +155,7 @@ export function TryOnClient() {
 
       {result && photo && (
         <section className="mt-16">
-          <h2 className="text-3xl mb-6 font-serif">Before · After</h2>
+          <h2 className="text-3xl mb-6 font-sans">Before · After</h2>
           <div className="grid grid-cols-2 gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={photo} alt="before" className="aspect-[3/4] object-cover w-full" />

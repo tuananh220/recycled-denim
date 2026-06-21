@@ -55,9 +55,9 @@ export function NewsletterPopup() {
           {!submitted ? (
             <>
               <Sparkles className="h-6 w-6 text-denim-rust mb-4" />
-              <h2 className="font-serif text-4xl leading-tight">
+              <h2 className="font-sans text-4xl leading-tight">
                 Giảm 10%<br />
-                <span className="italic font-light">cho lần đầu mua.</span>
+                <span className="font-light">cho lần đầu mua.</span>
               </h2>
               <p className="text-sm text-muted-foreground mt-3 mb-6">
                 Đăng ký nhận thông báo drop mới và chương trình đổi jean cũ lấy voucher.
@@ -80,7 +80,7 @@ export function NewsletterPopup() {
           ) : (
             <div className="text-center animate-fade-up">
               <div className="text-5xl">🎉</div>
-              <h2 className="font-serif text-3xl mt-4">Chào mừng đến ECHOVE!</h2>
+              <h2 className="font-sans text-3xl mt-4">Chào mừng đến ECHOVE!</h2>
               <p className="text-sm text-muted-foreground mt-2">Mã giảm giá của bạn:</p>
               <p className="font-mono text-2xl tracking-widest mt-3 px-4 py-3 border-2 border-dashed border-indigo-900 inline-block">
                 CHAO10

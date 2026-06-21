@@ -24,7 +24,7 @@ export function Testimonials() {
     <section className="py-24 bg-muted/30 border-y border-border overflow-hidden">
       <div className="container mb-12 text-center">
         <p className="text-xs uppercase tracking-widest text-denim-rust">Loved by</p>
-        <h2 className="font-serif text-4xl md:text-5xl mt-3">Our community</h2>
+        <h2 className="font-sans text-4xl md:text-5xl mt-3">Our community</h2>
       </div>
 
       <div className="relative">

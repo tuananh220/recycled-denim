@@ -69,7 +69,7 @@ function Stat({ icon: Icon, label, value, highlight }: { icon: any; label: strin
         <p className="text-xs uppercase tracking-widest opacity-70">{label}</p>
         <Icon className="h-4 w-4 opacity-60" />
       </div>
-      <p className="mt-3 text-2xl font-serif">{value}</p>
+      <p className="mt-3 text-2xl font-sans">{value}</p>
     </div>
   );
 }

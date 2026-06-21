@@ -16,7 +16,7 @@ export function InstagramFeed() {
       <div className="flex flex-col items-center text-center mb-10">
         <Instagram className="h-5 w-5 text-denim-rust" />
         <p className="text-xs uppercase tracking-widest mt-3 text-denim-rust">@echove.vn</p>
-        <h2 className="font-serif text-4xl md:text-5xl mt-3">Khoe outfit của bạn</h2>
+        <h2 className="font-sans text-4xl md:text-5xl mt-3">Khoe outfit của bạn</h2>
         <p className="mt-3 text-sm text-muted-foreground max-w-md">
           Chia sẻ outfit ECHOVE với hashtag <strong className="text-foreground">#JeanCuChuyenMoi</strong> để được feature trang chủ.
         </p>

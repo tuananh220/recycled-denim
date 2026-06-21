@@ -34,7 +34,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     <div className="container py-12">
       <header className="mb-12">
         <p className="text-xs uppercase tracking-widest text-denim-rust">Bộ sưu tập</p>
-        <h1 className="text-5xl mt-2 font-serif">Tất cả sản phẩm</h1>
+        <h1 className="text-5xl mt-2 font-sans">Tất cả sản phẩm</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {products.meta?.total ?? 0} sản phẩm — mỗi cái là 1-of-1, không có cái thứ hai.
         </p>

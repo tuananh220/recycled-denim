@@ -22,7 +22,7 @@ export default function LookbookPage() {
     <>
       <section className="container py-16 max-w-3xl text-center">
         <p className="text-xs uppercase tracking-widest text-denim-rust">SS26</p>
-        <h1 className="font-serif text-5xl md:text-7xl mt-3">Tái Sinh.</h1>
+        <h1 className="font-sans text-5xl md:text-7xl mt-3">Tái Sinh.</h1>
         <p className="mt-6 text-muted-foreground">
           Bảy outfit, tất cả từ jean cũ tái chế. Chụp tại Atelier ECHOVE — Quận 2, TP.HCM. 
           Photography: Nam Hoàng. Stylist: Linh Đan.
@@ -44,7 +44,7 @@ export default function LookbookPage() {
       </section>
 
       <section className="container pb-24 text-center">
-        <h2 className="font-serif text-4xl">Khám phá bộ sưu tập</h2>
+        <h2 className="font-sans text-4xl">Khám phá bộ sưu tập</h2>
         <Button asChild size="lg" className="mt-6"><Link href="/shop">Xem SS26</Link></Button>
       </section>
     </>

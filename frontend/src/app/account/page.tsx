@@ -26,7 +26,7 @@ export default function AccountPage() {
 
   return (
     <div className="container py-12 max-w-3xl">
-      <h1 className="text-4xl mb-2 font-serif">Xin chào, {user.name}</h1>
+      <h1 className="text-4xl mb-2 font-sans">Xin chào, {user.name}</h1>
       <p className="text-sm text-muted-foreground mb-8">
         {user.email} · <span className="uppercase tracking-widest">{user.role}</span>
       </p>

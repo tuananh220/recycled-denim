@@ -36,12 +36,12 @@ export function Markdown({ content }: { content: string }) {
   return (
     <div className="prose-fashion space-y-5">
       {blocks.map((block, i) => {
-        if (block.startsWith('# ')) return <h1 key={i} className="font-serif text-4xl md:text-5xl mt-8">{inline(block.slice(2))}</h1>;
-        if (block.startsWith('## ')) return <h2 key={i} className="font-serif text-3xl mt-10">{inline(block.slice(3))}</h2>;
-        if (block.startsWith('### ')) return <h3 key={i} className="font-serif text-2xl mt-8">{inline(block.slice(4))}</h3>;
+        if (block.startsWith('# ')) return <h1 key={i} className="font-sans text-4xl md:text-5xl mt-8">{inline(block.slice(2))}</h1>;
+        if (block.startsWith('## ')) return <h2 key={i} className="font-sans text-3xl mt-10">{inline(block.slice(3))}</h2>;
+        if (block.startsWith('### ')) return <h3 key={i} className="font-sans text-2xl mt-8">{inline(block.slice(4))}</h3>;
         if (block.startsWith('> ')) {
           return (
-            <blockquote key={i} className="border-l-2 border-denim-rust pl-6 italic text-xl font-serif text-foreground/80">
+            <blockquote key={i} className="border-l-2 border-denim-rust pl-6 italic text-xl font-sans text-foreground/80">
               {inline(block.slice(2))}
             </blockquote>
           );

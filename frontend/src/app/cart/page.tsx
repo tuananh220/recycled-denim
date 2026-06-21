@@ -21,7 +21,7 @@ export default function CartPage() {
   if (!user) {
     return (
       <div className="container py-24 text-center">
-        <h1 className="text-4xl mb-4 font-serif">Vui lòng đăng nhập</h1>
+        <h1 className="text-4xl mb-4 font-sans">Vui lòng đăng nhập</h1>
         <p className="text-muted-foreground mb-6">Đăng nhập để xem giỏ hàng của bạn.</p>
         <Button asChild><Link href="/login">Đăng nhập</Link></Button>
       </div>
@@ -31,7 +31,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="container py-24 text-center">
-        <h1 className="text-4xl mb-4 font-serif">Giỏ hàng trống</h1>
+        <h1 className="text-4xl mb-4 font-sans">Giỏ hàng trống</h1>
         <p className="text-muted-foreground mb-6">Khám phá các sản phẩm 1-of-1 của ECHOVE.</p>
         <Button asChild><Link href="/shop">Bắt đầu mua sắm</Link></Button>
       </div>
@@ -45,7 +45,7 @@ export default function CartPage() {
   return (
     <div className="container py-12 grid lg:grid-cols-[1fr_360px] gap-12">
       <div>
-        <h1 className="text-4xl mb-6 font-serif">Giỏ hàng của bạn</h1>
+        <h1 className="text-4xl mb-6 font-sans">Giỏ hàng của bạn</h1>
 
         <div className="mb-6">
           <FreeShippingBar subtotal={total} />

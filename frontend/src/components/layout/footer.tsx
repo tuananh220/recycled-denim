@@ -17,7 +17,7 @@ export function Footer() {
               className="h-10 w-auto object-contain dark:brightness-125"
             />
           </Link>
-          <p className="mt-4 font-serif text-lg italic">"{BRAND.tagline}"</p>
+          <p className="mt-4 font-sans text-lg italic">"{BRAND.tagline}"</p>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs">{BRAND.mission}</p>
           <div className="flex gap-3 mt-6">
             <Social href={BRAND.social.instagram} icon={Instagram} />
