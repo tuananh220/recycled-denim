@@ -7,8 +7,9 @@ const config: Config = {
     container: { center: true, padding: '1rem', screens: { '2xl': '1440px' } },
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui'],
-        serif: ['var(--font-serif)', 'ui-serif', 'Georgia'],
+        sans:  ['var(--font-sans)',  'ui-sans-serif',  'system-ui'],
+        serif: ['var(--font-serif)', 'ui-serif',       'Georgia'],
+        mono:  ['var(--font-mono)',  'ui-monospace',   'monospace'],
       },
       colors: {
         indigo: {
