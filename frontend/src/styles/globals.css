@@ -34,8 +34,7 @@
     letter-spacing: 0.01em;
   }
   h1, h2, h3, h4 {
-    @apply font-serif tracking-tight;
-    font-feature-settings: 'ss01', 'cv11';
+    @apply font-sans tracking-tight;
     line-height: 1.15;
   }
   h1 { @apply text-5xl font-bold; letter-spacing: -0.02em; }
