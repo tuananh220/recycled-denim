@@ -20,9 +20,9 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-indigo-950/40" />
         <div className="relative container h-full flex flex-col justify-end pb-16 text-denim-ecru">
           <p className="text-xs uppercase tracking-widest opacity-80">Câu chuyện của chúng tôi</p>
-          <h1 className="font-serif text-5xl md:text-7xl mt-4 max-w-2xl">
+          <h1 className="font-sans text-5xl md:text-7xl mt-4 max-w-2xl">
             Chúng tôi không sản xuất denim mới.<br />
-            <span className="italic font-light">Chúng tôi tái sinh nó.</span>
+            <span className="font-light">Chúng tôi tái sinh nó.</span>
           </h1>
         </div>
       </section>
@@ -31,7 +31,7 @@ export default function AboutPage() {
       <section className="container py-24 grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <p className="text-xs uppercase tracking-widest text-denim-rust">Tuyên ngôn</p>
-          <h2 className="font-serif text-4xl md:text-5xl mt-3">
+          <h2 className="font-sans text-4xl md:text-5xl mt-3">
             Bền vững<br />không phải xu hướng.
           </h2>
           <p className="mt-6 text-muted-foreground leading-relaxed">
@@ -54,7 +54,7 @@ export default function AboutPage() {
       {/* Impact metrics */}
       <section className="bg-indigo-900 text-denim-ecru py-24">
         <div className="container">
-          <h2 className="font-serif text-4xl md:text-5xl text-center">Tác động của chúng tôi.</h2>
+          <h2 className="font-sans text-4xl md:text-5xl text-center">Tác động của chúng tôi.</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16">
             <Impact icon={Recycle} value="1.2 tấn" label="Jean cũ tái chế mỗi năm" />
             <Impact icon={Droplets} value="92%" label="Tiết kiệm nước so với denim mới" />
@@ -67,7 +67,7 @@ export default function AboutPage() {
       {/* Process */}
       <section className="container py-24">
         <p className="text-xs uppercase tracking-widest text-denim-rust">Quy trình</p>
-        <h2 className="font-serif text-4xl md:text-5xl mt-3 max-w-2xl">
+        <h2 className="font-sans text-4xl md:text-5xl mt-3 max-w-2xl">
           Từ jean cũ của bạn<br />đến chiếc tiếp theo bạn yêu.
         </h2>
         <div className="grid md:grid-cols-5 gap-6 mt-12">
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="container pb-24 text-center">
-        <h2 className="font-serif text-4xl">Đem jean cũ. Nhận voucher mới.</h2>
+        <h2 className="font-sans text-4xl">Đem jean cũ. Nhận voucher mới.</h2>
         <p className="text-muted-foreground mt-3 max-w-md mx-auto">
           Gửi jean cũ của bạn đến ECHOVE — chúng tôi tặng voucher <strong>100.000 VNĐ</strong> cho đơn hàng tiếp theo.
         </p>
@@ -103,7 +103,7 @@ function Impact({ icon: Icon, value, label }: { icon: any; value: string; label:
   return (
     <div className="text-center">
       <Icon className="h-6 w-6 mx-auto opacity-80" />
-      <p className="font-serif text-5xl mt-4">{value}</p>
+      <p className="font-sans text-5xl mt-4">{value}</p>
       <p className="text-xs uppercase tracking-widest mt-2 opacity-70 max-w-[180px] mx-auto">{label}</p>
     </div>
   );
