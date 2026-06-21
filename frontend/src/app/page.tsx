@@ -33,9 +33,9 @@ export default async function Home() {
         />
         <div className="relative container h-full flex flex-col justify-end pb-20 text-denim-ecru">
           <Badge className="border-denim-ecru text-denim-ecru w-fit mb-6">SS26 · 1-OF-1 DROP</Badge>
-          <h1 className="text-6xl md:text-8xl font-serif leading-[0.95]">
+          <h1 className="text-6xl md:text-8xl font-sans leading-[0.95]">
             Jean cũ,<br />
-            <span className="italic font-light">chuyện mới.</span>
+            <span className="font-light">chuyện mới.</span>
           </h1>
           <p className="mt-6 max-w-md text-base text-denim-ecru/80">
             {BRAND.mission}
@@ -59,9 +59,9 @@ export default async function Home() {
           {/* Left — text */}
           <div>
             <p className="text-xs uppercase tracking-widest text-denim-rust">About ECHOVE</p>
-            <h2 className="font-serif text-5xl md:text-6xl mt-4 leading-[1.05]">
+            <h2 className="font-sans text-5xl md:text-6xl mt-4 leading-[1.05]">
               Mỗi chiếc jean<br />
-              <span className="italic font-light">là một bản thể duy nhất.</span>
+              <span className="font-light">là một bản thể duy nhất.</span>
             </h2>
             <div className="mt-8 space-y-5 text-muted-foreground leading-relaxed">
               <p>
@@ -73,7 +73,7 @@ export default async function Home() {
                 — không bộ sưu tập nào lặp lại. Mỗi thiết kế đều mang trong mình lịch sử của người chủ cũ,
                 cộng với tinh thần Gen Z hiện đại.
               </p>
-              <p className="font-serif text-2xl italic text-foreground/90 pt-2">
+              <p className="font-sans text-2xl text-foreground/90 pt-2">
                 "Cũ người, chất ta."
               </p>
             </div>
@@ -93,7 +93,7 @@ export default async function Home() {
 
           {/* Right — TVC Video */}
           <div className="space-y-3">
-            <TvcVideo caption="ECHOVE — TVC 2026" />
+            <TvcVideo autoplay caption="ECHOVE — TVC 2026" />
             <p className="text-xs text-muted-foreground text-center italic">
               "Jean cũ, chuyện mới." — Hành trình tái sinh denim của ECHOVE.
             </p>
@@ -111,7 +111,7 @@ export default async function Home() {
           ].map((p) => (
             <div key={p.title} className="animate-fade-up">
               <p.icon className="h-7 w-7 text-denim-rust" />
-              <h3 className="mt-4 text-2xl font-serif">{p.title}</h3>
+              <h3 className="mt-4 text-2xl font-sans">{p.title}</h3>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
             </div>
           ))}
@@ -123,7 +123,7 @@ export default async function Home() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <p className="text-xs uppercase tracking-widest text-denim-rust">Mới về</p>
-            <h2 className="text-4xl md:text-5xl mt-2 font-serif">Bộ sưu tập nổi bật</h2>
+            <h2 className="text-4xl md:text-5xl mt-2 font-sans">Bộ sưu tập nổi bật</h2>
           </div>
           <Link href="/shop" className="text-xs uppercase tracking-widest hover:text-denim-rust">Xem tất cả →</Link>
         </div>
@@ -159,9 +159,9 @@ export default async function Home() {
         <div className="container grid md:grid-cols-2 gap-12 items-center">
           <div>
             <Leaf className="h-6 w-6 mb-4 text-denim-ecru/80" />
-            <h2 className="font-serif text-5xl leading-tight">
+            <h2 className="font-sans text-5xl leading-tight">
               Đem jean cũ cho ECHOVE.<br />
-              <span className="italic font-light">Nhận voucher tái sinh.</span>
+              <span className="font-light">Nhận voucher tái sinh.</span>
             </h2>
             <p className="mt-4 text-denim-ecru/70 max-w-md">
               Gửi quần jean cũ của bạn (bất kỳ thương hiệu) đến ECHOVE — bạn sẽ nhận 100.000₫ voucher
@@ -182,7 +182,7 @@ export default async function Home() {
       <section className="container py-20 text-center">
         <MapPin className="h-5 w-5 mx-auto text-denim-rust" />
         <p className="text-xs uppercase tracking-widest text-denim-rust mt-3">Atelier</p>
-        <h2 className="font-serif text-3xl md:text-4xl mt-3">{BRAND.address}</h2>
+        <h2 className="font-sans text-3xl md:text-4xl mt-3">{BRAND.address}</h2>
         <p className="mt-3 text-sm text-muted-foreground">{BRAND.audience} · Đặt lịch tham quan studio: {BRAND.email}</p>
       </section>
 
@@ -194,7 +194,7 @@ export default async function Home() {
 function MiniStat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <p className="font-serif text-3xl">{value}</p>
+      <p className="font-sans text-3xl">{value}</p>
       <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{label}</p>
     </div>
   );

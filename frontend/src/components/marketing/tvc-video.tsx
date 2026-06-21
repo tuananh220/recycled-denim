@@ -6,15 +6,17 @@ interface Props {
   src?: string;
   poster?: string;
   caption?: string;
+  autoplay?: boolean;
 }
 
 export function TvcVideo({
   src = '/videos/tvc.mp4',
   poster = '/videos/tvc-poster.jpg',
   caption,
+  autoplay = false,
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(autoplay);
   const [muted, setMuted] = useState(true);
 
   function toggle() {
@@ -40,6 +42,7 @@ export function TvcVideo({
         muted
         loop
         playsInline
+        autoPlay={autoplay}
         preload="metadata"
         className="w-full aspect-video object-cover cursor-pointer"
         onClick={toggle}
