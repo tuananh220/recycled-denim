@@ -1,6 +1,7 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
 import { AdminShell } from '@/components/dashboard/admin-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,13 @@ const STATUSES = ['PENDING', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANC
 const STATUS_VI: Record<string, string> = {
   PENDING: 'Chờ xác nhận', PAID: 'Đã thanh toán', PROCESSING: 'Đang xử lý',
   SHIPPED: 'Đang giao', DELIVERED: 'Đã giao', CANCELLED: 'Đã hủy', REFUNDED: 'Đã hoàn tiền',
+};
+
+const PAYMENT_METHOD_VI: Record<string, string> = {
+  COD: 'Thanh toán khi nhận hàng',
+  STRIPE: 'Stripe',
+  PAYPAL: 'PayPal',
+  VNPAY: 'VNPay',
 };
 
 export default function AdminOrderDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -39,11 +47,28 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
   if (!order) return <AdminShell allow={['ADMIN']} title="Đơn hàng"><div className="shimmer h-32" /></AdminShell>;
 
   const addr = order.shippingAddress || {};
+  const isCOD = order.payments?.[0]?.provider === 'COD';
+  const isPending = status === 'PENDING';
+  const needsConfirmation = isCOD && isPending;
 
   return (
     <AdminShell allow={['ADMIN']} title={order.number} description={`Đặt ngày ${formatDate(order.createdAt)} · ${order.user?.email}`}>
       <div className="grid lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-6">
+          {needsConfirmation && (
+            <div className="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
+              <div className="flex gap-3">
+                <Clock className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">⏳ Chờ xác nhận đơn hàng</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Đây là đơn hàng COD (Thanh toán khi nhận). Vui lòng xác nhận đơn hàng bằng cách chuyển sang trạng thái "Đang xử lý" để tiếp tục quy trình.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <section className="border border-border">
             <h2 className="text-xs uppercase tracking-widest p-4 border-b border-border">Sản phẩm</h2>
             <ul className="divide-y divide-border">
@@ -81,8 +106,26 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
 
         <aside className="lg:sticky lg:top-24 lg:self-start space-y-4 border border-border p-4">
           <h2 className="text-xs uppercase tracking-widest">Quản lý</h2>
+
+          <div className="space-y-2 text-xs bg-muted/40 p-3 rounded">
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Phương thức:</span>
+              <span className="font-semibold text-denim-rust">
+                {PAYMENT_METHOD_VI[order.payments?.[0]?.provider] || order.payments?.[0]?.provider}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-medium">Trạng thái TT:</span>
+              <span className={`uppercase tracking-widest font-semibold ${
+                order.paymentStatus === 'SUCCEEDED' ? 'text-green-600' : 'text-yellow-600'
+              }`}>
+                {order.paymentStatus === 'SUCCEEDED' ? '✓ Đã TT' : '⏳ Chờ TT'}
+              </span>
+            </div>
+          </div>
+
           <div>
-            <Label className="mb-1.5 block">Trạng thái</Label>
+            <Label className="mb-1.5 block">Trạng thái đơn hàng</Label>
             <Select value={status} onValueChange={setStatus}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{STATUSES.map(s => <SelectItem key={s} value={s}>{STATUS_VI[s]}</SelectItem>)}</SelectContent>
@@ -94,10 +137,18 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
           </div>
           <Button className="w-full" onClick={save}>Lưu thay đổi</Button>
 
-          <div className="border-t border-border pt-4 text-xs space-y-1 text-muted-foreground">
-            <p>Thanh toán: <span className="uppercase tracking-widest">{order.paymentStatus}</span></p>
-            <p>Số giao dịch: {order.payments?.length ?? 0}</p>
-          </div>
+          {isCOD && (
+            <div className="border-t border-border pt-4 text-xs space-y-2">
+              <p className="font-medium">📌 Quy trình COD:</p>
+              <ol className="space-y-1 text-muted-foreground list-decimal list-inside">
+                <li>Xác nhận đơn → "Đang xử lý"</li>
+                <li>Chuẩn bị hàng → "Đang giao"</li>
+                <li>Nhân viên giao hàng</li>
+                <li>Khách thanh toán khi nhận</li>
+                <li>Xác nhận nhận → "Đã giao"</li>
+              </ol>
+            </div>
+          )}
         </aside>
       </div>
     </AdminShell>
