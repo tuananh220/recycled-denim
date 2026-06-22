@@ -5,8 +5,13 @@ import { api } from '@/lib/api';
 
 export type Role = 'CUSTOMER' | 'ADMIN' | 'STAFF' | 'DESIGNER' | 'WAREHOUSE';
 export interface AuthUser {
-  id: string; email: string; name: string; role: Role;
-  avatarUrl?: string | null; emailVerified: boolean;
+  id: string;
+  email: string;
+  name: string;
+  phone?: string;
+  avatarUrl?: string | null;
+  role: Role;
+  emailVerified: boolean;
 }
 
 interface AuthState {
