@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import { AdminShell } from '@/components/dashboard/admin-shell';
@@ -87,8 +88,7 @@ export default function AdminProductsPage() {
           {
             key: 'thumb', header: '', className: 'w-16',
             cell: (r: any) => r.images?.[0]?.url
-              // eslint-disable-next-line @next/next/no-img-element
-              ? <img src={r.images[0].url} alt="" className="w-12 h-12 object-cover" />
+              ? <Image src={r.images[0].url} alt="" width={48} height={48} className="w-12 h-12 object-cover" />
               : <div className="w-12 h-12 bg-muted" />,
           },
           {

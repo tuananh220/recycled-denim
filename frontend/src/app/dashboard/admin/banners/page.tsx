@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Plus, Trash2 } from 'lucide-react';
@@ -73,8 +74,7 @@ export default function AdminBannersPage() {
           {rows.map((b) => (
             <article key={b.id} className="border border-border overflow-hidden">
               <div className="aspect-[16/9] bg-muted relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={b.imageUrl} alt={b.title} className="absolute inset-0 w-full h-full object-cover" />
+                <Image src={b.imageUrl} alt={b.title} fill className="absolute inset-0 w-full h-full object-cover" />
               </div>
               <div className="p-4 space-y-2">
                 <p className="font-medium">{b.title}</p>
