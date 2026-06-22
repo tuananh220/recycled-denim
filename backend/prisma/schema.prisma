@@ -87,7 +87,7 @@ model User {
   oauthAccounts  OAuthAccount[]
   addresses     Address[]
   orders        Order[]
-  orderHistory  OrderHistory[]
+  orderHistory  OrderHistory[] @relation("changedByUser")
   cart          Cart?
   reviews       Review[]
   wishlist      WishlistItem[]
