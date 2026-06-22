@@ -1,12 +1,13 @@
 'use client';
 import { use, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { AlertTriangle, Clock } from 'lucide-react';
 import { AdminShell } from '@/components/dashboard/admin-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { api } from '@/lib/api';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
@@ -28,6 +29,8 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState<string>('');
   const [tracking, setTracking] = useState<string>('');
+  const [saving, setSaving] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, newStatus: '' as string });
 
   async function load() {
     const { data } = await api.get(`/orders/${id}`);
@@ -37,11 +40,41 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
   }
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
 
+  const trackingRegex = /^[A-Z0-9\-]{3,}$/;
+  const isTrackingValid = !tracking || trackingRegex.test(tracking);
+
+  function handleStatusChange(newStatus: string) {
+    if (newStatus !== status) {
+      setConfirmDialog({ open: true, newStatus });
+    }
+  }
+
   async function save() {
+    setSaving(true);
     try {
       await api.patch(`/orders/${id}/status`, { status, trackingNumber: tracking || undefined });
-      toast.success('Đã cập nhật đơn hàng'); load();
-    } catch (e: any) { toast.error(e?.response?.data?.message || 'Thất bại'); }
+      toast.success('Đã cập nhật đơn hàng');
+      load();
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Thất bại');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleConfirm() {
+    setConfirmDialog({ open: false, newStatus: '' });
+    setStatus(confirmDialog.newStatus);
+    setSaving(true);
+    try {
+      await api.patch(`/orders/${id}/status`, { status: confirmDialog.newStatus, trackingNumber: tracking || undefined });
+      toast.success('Đã cập nhật đơn hàng');
+      load();
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Thất bại');
+    } finally {
+      setSaving(false);
+    }
   }
 
   if (!order) return <AdminShell allow={['ADMIN']} title="Đơn hàng"><div className="shimmer h-32" /></AdminShell>;
@@ -126,16 +159,31 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
 
           <div>
             <Label className="mb-1.5 block">Trạng thái đơn hàng</Label>
-            <Select value={status} onValueChange={setStatus}>
+            <Select value={status} onValueChange={handleStatusChange} disabled={saving}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{STATUSES.map(s => <SelectItem key={s} value={s}>{STATUS_VI[s]}</SelectItem>)}</SelectContent>
             </Select>
           </div>
           <div>
             <Label className="mb-1.5 block">Mã vận đơn</Label>
-            <Input value={tracking} onChange={(e) => setTracking(e.target.value)} placeholder="TRK-…" />
+            <Input
+              value={tracking}
+              onChange={(e) => setTracking(e.target.value)}
+              placeholder="TRK-123456 hoặc ABC123"
+              maxLength={50}
+              disabled={saving}
+            />
+            {tracking && !isTrackingValid && (
+              <p className="text-xs text-red-600 mt-1">Mã vận đơn không hợp lệ (3+ ký tự, chữ hoa, số, dấu gạch)</p>
+            )}
           </div>
-          <Button className="w-full" onClick={save}>Lưu thay đổi</Button>
+          <Button
+            className="w-full"
+            onClick={save}
+            disabled={saving || !isTrackingValid}
+          >
+            {saving ? 'Đang lưu…' : 'Lưu thay đổi'}
+          </Button>
 
           {isCOD && (
             <div className="border-t border-border pt-4 text-xs space-y-2">
@@ -151,6 +199,28 @@ export default function AdminOrderDetail({ params }: { params: Promise<{ id: str
           )}
         </aside>
       </div>
+
+      <Dialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              Xác nhận thay đổi trạng thái
+            </DialogTitle>
+            <DialogDescription>
+              Bạn muốn chuyển đơn từ <strong>{STATUS_VI[status]}</strong> sang <strong>{STATUS_VI[confirmDialog.newStatus]}</strong>?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setConfirmDialog({ open: false, newStatus: '' })} disabled={saving}>
+              Hủy
+            </Button>
+            <Button onClick={handleConfirm} disabled={saving}>
+              {saving ? 'Đang lưu…' : 'Xác nhận'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminShell>
   );
 }
