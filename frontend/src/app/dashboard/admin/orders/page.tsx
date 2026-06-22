@@ -73,7 +73,6 @@ export default function AdminOrdersPage() {
               <SelectValue placeholder="Chọn trạng thái" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tất cả trạng thái</SelectItem>
               {Object.entries(STATUS_VI).map(([k, v]) => (
                 <SelectItem key={k} value={k}>{v}</SelectItem>
               ))}
