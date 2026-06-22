@@ -2,11 +2,13 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Clock, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/store/auth';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 const steps = ['PENDING', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+const stepsNoPayment = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED']; // COD flow
 const STATUS_VI: Record<string, string> = {
   PENDING: 'Chờ xác nhận',
   PAID: 'Đã thanh toán',
@@ -15,6 +17,13 @@ const STATUS_VI: Record<string, string> = {
   DELIVERED: 'Đã giao',
   CANCELLED: 'Đã hủy',
   REFUNDED: 'Đã hoàn tiền',
+};
+
+const PAYMENT_METHOD_VI: Record<string, string> = {
+  COD: 'Thanh toán khi nhận hàng',
+  STRIPE: 'Stripe',
+  PAYPAL: 'PayPal',
+  VNPAY: 'VNPay',
 };
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -31,7 +40,10 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   if (!o) return <div className="container py-12 text-center text-muted-foreground">Đang tải…</div>;
 
-  const stepIdx = Math.max(0, steps.indexOf(o.status));
+  const isCOD = o.payments?.[0]?.provider === 'COD';
+  const currentSteps = isCOD ? stepsNoPayment : steps;
+  const stepIdx = Math.max(0, currentSteps.indexOf(o.status));
+  const isPending = o.status === 'PENDING';
 
   const handleCancel = async () => {
     if (!window.confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
@@ -39,7 +51,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     try {
       await api.post(`/orders/${id}/cancel`);
       toast.success('Hủy đơn hàng thành công.');
-      // Refresh order details
       api.get(`/orders/${id}`).then(r => setOrder(r.data));
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Không thể hủy đơn hàng');
@@ -68,6 +79,17 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
+      {/* COD Pending Alert */}
+      {isCOD && isPending && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 my-6 flex gap-3">
+          <Clock className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-medium text-blue-900">⏳ Đơn hàng đang được xác nhận</p>
+            <p className="text-blue-700 mt-1">Cửa hàng sẽ xác nhận đơn hàng trong thời gian sớm nhất. Bạn sẽ nhận được email hoặc SMS khi có cập nhật.</p>
+          </div>
+        </div>
+      )}
+
       {o.status === 'CANCELLED' && (
         <div className="bg-red-50 text-red-800 border border-red-200 rounded-lg p-4 my-8 text-sm">
           Đơn hàng này đã bị hủy.
@@ -80,17 +102,18 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
+      {/* Progress Tracker */}
       {!['CANCELLED', 'REFUNDED'].includes(o.status) && (
         <div className="my-10">
           <div className="flex justify-between text-[10px] uppercase tracking-widest mb-2">
-            {steps.map((s, i) => (
+            {currentSteps.map((s, i) => (
               <span key={s} className={i <= stepIdx ? 'text-indigo-900 font-semibold' : 'text-muted-foreground'}>
                 {STATUS_VI[s]}
               </span>
             ))}
           </div>
           <div className="h-1 bg-muted relative">
-            <div className="absolute top-0 left-0 h-1 bg-indigo-900 transition-all duration-500" style={{ width: `${(stepIdx / (steps.length - 1)) * 100}%` }} />
+            <div className="absolute top-0 left-0 h-1 bg-indigo-900 transition-all duration-500" style={{ width: `${(stepIdx / (currentSteps.length - 1)) * 100}%` }} />
           </div>
           {o.trackingNumber && (
             <p className="text-sm mt-3">Mã vận đơn: <span className="font-mono">{o.trackingNumber}</span></p>
@@ -98,6 +121,27 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
+      {/* Payment Info Section */}
+      <div className="bg-muted/40 p-4 rounded-lg my-6 text-sm space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Phương thức thanh toán:</span>
+          <span className="font-medium">{PAYMENT_METHOD_VI[o.payments?.[0]?.provider] || o.payments?.[0]?.provider}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Trạng thái thanh toán:</span>
+          <span className={`font-medium ${
+            o.paymentStatus === 'SUCCEEDED' ? 'text-green-600' :
+            isCOD && o.status === 'DELIVERED' ? 'text-yellow-600' :
+            isCOD ? 'text-orange-600' : 'text-yellow-600'
+          }`}>
+            {o.paymentStatus === 'SUCCEEDED' ? '✓ Đã thanh toán' :
+             isCOD && o.status === 'DELIVERED' ? '⏳ Chờ thanh toán khi nhận hàng' :
+             isCOD ? '⏳ Thanh toán khi nhận hàng' : '⏳ Chờ thanh toán'}
+          </span>
+        </div>
+      </div>
+
+      {/* Products List */}
       <ul className="divide-y divide-border">
         {o.items.map((i: any) => (
           <li key={i.id} className="py-4 flex justify-between text-sm">
@@ -110,6 +154,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         ))}
       </ul>
 
+      {/* Summary */}
       <div className="border-t border-border mt-6 pt-4 space-y-1.5 text-sm max-w-xs ml-auto">
         <Row label="Tạm tính" v={Number(o.subtotal)} />
         <Row label="Vận chuyển" v={Number(o.shipping)} />
@@ -120,6 +165,21 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
+      {/* COD Info Guide */}
+      {isCOD && (
+        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm space-y-2">
+          <p className="font-medium text-blue-900">📌 Thông tin COD (Thanh toán khi nhận)</p>
+          <ol className="list-decimal list-inside space-y-1 text-blue-800">
+            <li>Cửa hàng xác nhận đơn hàng</li>
+            <li>Chuẩn bị hàng và giao vận đơn</li>
+            <li>Nhân viên giao hàng liên hệ bạn</li>
+            <li>Bạn thanh toán khi nhận hàng</li>
+            <li>Xác nhận nhận hàng (nếu cần)</li>
+          </ol>
+        </div>
+      )}
+
+      {/* Cancel Button */}
       {o.status === 'PENDING' && (
         <div className="mt-8 border-t border-border pt-6 flex justify-end">
           <button
@@ -134,6 +194,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     </div>
   );
 }
+
 const Row = ({ label, v }: { label: string; v: number }) => (
   <div className="flex justify-between text-muted-foreground"><span>{label}</span><span className="text-foreground">{formatCurrency(v)}</span></div>
 );
