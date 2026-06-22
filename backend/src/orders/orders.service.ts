@@ -4,15 +4,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { CheckoutDto, UpdateOrderStatusDto } from './dto/order.dto';
 import { MailService } from '../mail/mail.service';
+import { CartItem } from '../common/types';
 
 const ord = (n: number) => n.toString().padStart(5, '0');
-
-interface CartItem {
-  productId: string;
-  size?: string | null;
-  color?: string | null;
-  quantity: number;
-}
 
 @Injectable()
 export class OrdersService {
@@ -34,8 +28,8 @@ export class OrdersService {
     // Prepare cart items for inventory check
     const cartItemsForInventory: CartItem[] = cart.items.map(i => ({
       productId: i.productId,
-      size: i.size,
-      color: i.color,
+      size: i.size ?? undefined,
+      color: i.color ?? undefined,
       quantity: i.quantity,
     }));
 
@@ -288,7 +282,7 @@ export class OrdersService {
     if (order.userId !== userId) {
       throw new BadRequestException('Bạn không có quyền hủy đơn hàng này');
     }
-    if (!([OrderStatus.PENDING, OrderStatus.PROCESSING] as const).includes(order.status)) {
+    if (![OrderStatus.PENDING, OrderStatus.PROCESSING].includes(order.status as any)) {
       throw new BadRequestException(
         'Chỉ có thể hủy đơn hàng ở trạng thái Chờ xác nhận hoặc Đang xử lý',
       );

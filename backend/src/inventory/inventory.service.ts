@@ -1,13 +1,7 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-
-interface CartItem {
-  productId: string;
-  size?: string;
-  color?: string;
-  quantity: number;
-}
+import { CartItem } from '../common/types';
 
 @Injectable()
 export class InventoryService {
