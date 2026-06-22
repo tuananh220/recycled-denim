@@ -35,4 +35,7 @@ export class ProductsController {
 
   @ApiBearerAuth() @UseGuards(JwtAuthGuard) @Roles(Role.ADMIN) @Delete(':id')
   remove(@Param('id') id: string) { return this.products.remove(id); }
+
+  @ApiBearerAuth() @UseGuards(JwtAuthGuard) @Roles(Role.ADMIN) @Delete(':id/permanent')
+  hardDelete(@Param('id') id: string) { return this.products.hardDelete(id); }
 }

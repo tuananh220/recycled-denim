@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto, QueryProductDto, UpdateProductDto } from './dto/product.dto';
@@ -150,5 +150,20 @@ export class ProductsService {
       data: { isActive: false },
       include: { images: true, category: true },
     });
+  }
+
+  async hardDelete(id: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: { orderItems: { take: 1 } },
+    });
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    if (product.orderItems.length > 0) {
+      throw new BadRequestException('Cannot delete product with existing orders. Use soft delete instead.');
+    }
+
+    return this.prisma.product.delete({ where: { id } });
   }
 }
