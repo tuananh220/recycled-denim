@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ImageUploader } from '@/components/dashboard/image-uploader';
 
 interface FormData {
   name: string;
@@ -18,7 +19,7 @@ interface FormData {
 export default function ProfilePage() {
   const { user, fetchMe } = useAuthStore();
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       name: user?.name || '',
       phone: user?.phone || '',
@@ -97,26 +98,19 @@ export default function ProfilePage() {
           </div>
 
           <div>
-            <Label htmlFor="avatarUrl">Avatar URL</Label>
-            <Input
-              id="avatarUrl"
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              {...register('avatarUrl')}
-              disabled={loading}
-            />
-            {errors.avatarUrl && (
-              <p className="text-sm text-red-500 mt-1">{errors.avatarUrl.message}</p>
-            )}
-            {user?.avatarUrl && (
-              <div className="mt-2">
-                <img
-                  src={user.avatarUrl}
-                  alt="Avatar preview"
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-              </div>
-            )}
+            <Label htmlFor="avatarUrl">Avatar</Label>
+            <div className="mt-2 space-y-2">
+              <ImageUploader
+                value={watch('avatarUrl') ? [watch('avatarUrl')] : []}
+                onChange={(urls) => setValue('avatarUrl', urls[0] || '')}
+                multiple={false}
+                folder="users/avatars"
+                maxSize={800}
+              />
+              {errors.avatarUrl && (
+                <p className="text-sm text-red-500">{errors.avatarUrl.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="pt-4">

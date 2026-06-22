@@ -32,19 +32,19 @@ export default function AdminOverview() {
             <Stat icon={DollarSign} label="Doanh thu (30d)"   value={formatCurrency(data.revenue30d)} highlight />
           </div>
 
-          <section className="border border-border p-6">
+          <section className="bg-background border border-border p-6">
             <div className="flex justify-between items-baseline mb-4">
-              <h2 className="text-xs uppercase tracking-widest">Doanh thu · 14 ngày qua</h2>
+              <h2 className="text-xs uppercase tracking-widest text-foreground">Doanh thu · 14 ngày qua</h2>
               <span className="text-xs text-muted-foreground">VNĐ</span>
             </div>
             <RevenueChart data={data.revenueByDay ?? []} />
           </section>
 
           <section>
-            <h2 className="text-xs uppercase tracking-widest mb-4">Đơn hàng gần đây</h2>
-            <ul className="divide-y divide-border border border-border">
+            <h2 className="text-xs uppercase tracking-widest mb-4 text-foreground">Đơn hàng gần đây</h2>
+            <ul className="divide-y divide-border border border-border bg-background">
               {data.recentOrders.map((o: any) => (
-                <li key={o.id} className="py-3 px-4 grid grid-cols-4 text-sm items-center">
+                <li key={o.id} className="py-3 px-4 grid grid-cols-4 text-sm items-center text-foreground">
                   <span className="font-medium">{o.number}</span>
                   <span className="truncate">{o.user?.email}</span>
                   <span className="uppercase tracking-widest text-xs">{STATUS_VI[o.status] || o.status}</span>
@@ -52,7 +52,7 @@ export default function AdminOverview() {
                 </li>
               ))}
               {data.recentOrders.length === 0 && (
-                <li className="p-12 text-center text-sm text-muted-foreground">Chưa có đơn hàng.</li>
+                <li className="p-12 text-center text-sm text-muted-foreground bg-background">Chưa có đơn hàng.</li>
               )}
             </ul>
           </section>
