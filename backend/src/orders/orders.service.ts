@@ -9,8 +9,8 @@ const ord = (n: number) => n.toString().padStart(5, '0');
 
 interface CartItem {
   productId: string;
-  size?: string;
-  color?: string;
+  size?: string | null;
+  color?: string | null;
   quantity: number;
 }
 
@@ -60,7 +60,7 @@ export class OrdersService {
 
     // 3. VALIDATE & APPLY COUPON (enhanced validation)
     let discount = 0;
-    let coupon = null;
+    let coupon: any = null;
     if (dto.couponCode) {
       coupon = await this.prisma.coupon.findUnique({
         where: { code: dto.couponCode },
@@ -116,7 +116,7 @@ export class OrdersService {
             total,
             couponCode: dto.couponCode ?? null,
             notes: dto.notes ?? null,
-            shippingAddress: dto.shippingAddress,
+            shippingAddress: dto.shippingAddress as any,
             items: { create: items },
             payments: {
               create: {
@@ -144,7 +144,7 @@ export class OrdersService {
         await tx.orderHistory.create({
           data: {
             orderId: newOrder.id,
-            oldStatus: null, // First entry
+            oldStatus: OrderStatus.PENDING,
             newStatus: OrderStatus.PENDING,
             changedBy: userId,
             reason: 'Order created via checkout',
@@ -170,10 +170,7 @@ export class OrdersService {
       this.logger.log(`Order created: ${order.number} by user ${userId}`);
       return order;
     } catch (error) {
-      this.logger.error(
-        `Checkout failed for user ${userId}: ${error.message}`,
-        error.stack,
-      );
+      this.logger.log(`Checkout failed for user ${userId}: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -291,7 +288,7 @@ export class OrdersService {
     if (order.userId !== userId) {
       throw new BadRequestException('Bạn không có quyền hủy đơn hàng này');
     }
-    if (![OrderStatus.PENDING, OrderStatus.PROCESSING].includes(order.status)) {
+    if (!([OrderStatus.PENDING, OrderStatus.PROCESSING] as const).includes(order.status)) {
       throw new BadRequestException(
         'Chỉ có thể hủy đơn hàng ở trạng thái Chờ xác nhận hoặc Đang xử lý',
       );
@@ -312,8 +309,8 @@ export class OrdersService {
       // Release inventory
       const itemsForRelease: CartItem[] = result.items.map(i => ({
         productId: i.productId,
-        size: i.size,
-        color: i.color,
+        size: i.size || undefined,
+        color: i.color || undefined,
         quantity: i.quantity,
       }));
       await this.inventory.releaseStock(itemsForRelease, tx);
