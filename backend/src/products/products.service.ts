@@ -109,20 +109,22 @@ export class ProductsService {
       include: { images: true, category: true },
     });
 
-    // Create inventory for all size/color combinations
+    // Batch create inventory for all size/color combinations
     const qty = dto.initialInventoryQty ?? 0;
+    const inventoryItems = [];
     for (const size of dto.sizes) {
       for (const color of dto.colors) {
-        await this.prisma.inventory.create({
-          data: {
-            productId: product.id,
-            size,
-            color,
-            quantity: qty,
-            sku: `${dto.slug}-${size}-${color.replace('#', '')}`.toUpperCase(),
-          },
+        inventoryItems.push({
+          productId: product.id,
+          size,
+          color,
+          quantity: qty,
+          sku: `${dto.slug}-${size}-${color.replace('#', '')}`.toUpperCase(),
         });
       }
+    }
+    if (inventoryItems.length > 0) {
+      await this.prisma.inventory.createMany({ data: inventoryItems });
     }
 
     return product;

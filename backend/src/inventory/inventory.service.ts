@@ -10,15 +10,22 @@ export class InventoryService {
   constructor(private prisma: PrismaService) {}
 
   async validateStockAvailable(items: CartItem[]): Promise<void> {
-    for (const item of items) {
-      const inventory = await this.prisma.inventory.findFirst({
-        where: {
+    const inventories = await this.prisma.inventory.findMany({
+      where: {
+        OR: items.map(item => ({
           productId: item.productId,
           size: item.size,
           color: item.color,
-        },
-      });
+        })),
+      },
+    });
 
+    const inventoryMap = new Map(inventories.map(inv =>
+      [`${inv.productId}|${inv.size}|${inv.color}`, inv]
+    ));
+
+    for (const item of items) {
+      const inventory = inventoryMap.get(`${item.productId}|${item.size}|${item.color}`);
       if (!inventory || inventory.quantity < item.quantity) {
         throw new BadRequestException(
           `Sản phẩm không đủ số lượng trong kho. Yêu cầu: ${item.quantity}, Có sẵn: ${inventory?.quantity || 0}`,
@@ -30,68 +37,79 @@ export class InventoryService {
   async reserveStock(items: CartItem[], tx?: Prisma.TransactionClient) {
     const client = tx || this.prisma;
 
-    for (const item of items) {
-      const inventory = await client.inventory.findFirst({
-        where: {
+    const inventories = await client.inventory.findMany({
+      where: {
+        OR: items.map(item => ({
           productId: item.productId,
           size: item.size,
           color: item.color,
-        },
-      });
+        })),
+      },
+    });
 
+    const inventoryMap = new Map(inventories.map(inv =>
+      [`${inv.productId}|${inv.size}|${inv.color}`, inv]
+    ));
+
+    for (const item of items) {
+      const inventory = inventoryMap.get(`${item.productId}|${item.size}|${item.color}`);
       if (!inventory) {
-        throw new BadRequestException(
-          `Sản phẩm không tồn tại: ${item.productId}`,
-        );
+        throw new BadRequestException(`Sản phẩm không tồn tại: ${item.productId}`);
       }
-
       if (inventory.quantity < item.quantity) {
         throw new BadRequestException(
           `Không đủ số lượng: ${item.productId}. Yêu cầu: ${item.quantity}, Có sẵn: ${inventory.quantity}`,
         );
       }
-
-      // Decrement inventory
-      await client.inventory.update({
-        where: { id: inventory.id },
-        data: { quantity: { decrement: item.quantity } },
-      });
-
-      this.logger.debug(
-        `Reserved ${item.quantity} units of ${item.productId} (size: ${item.size}, color: ${item.color})`,
-      );
     }
+
+    await Promise.all(
+      items.map(item => {
+        const inventory = inventoryMap.get(`${item.productId}|${item.size}|${item.color}`)!;
+        this.logger.debug(
+          `Reserved ${item.quantity} units of ${item.productId} (size: ${item.size}, color: ${item.color})`,
+        );
+        return client.inventory.update({
+          where: { id: inventory.id },
+          data: { quantity: { decrement: item.quantity } },
+        });
+      })
+    );
   }
 
   async releaseStock(items: CartItem[], tx?: Prisma.TransactionClient) {
     const client = tx || this.prisma;
 
-    for (const item of items) {
-      const inventory = await client.inventory.findFirst({
-        where: {
+    const inventories = await client.inventory.findMany({
+      where: {
+        OR: items.map(item => ({
           productId: item.productId,
           size: item.size,
           color: item.color,
-        },
-      });
+        })),
+      },
+    });
 
-      if (!inventory) {
-        this.logger.warn(
-          `Inventory not found for ${item.productId} (size: ${item.size}, color: ${item.color})`,
-        );
-        continue;
-      }
+    const inventoryMap = new Map(inventories.map(inv =>
+      [`${inv.productId}|${inv.size}|${inv.color}`, inv]
+    ));
 
-      // Increment inventory (release)
-      await client.inventory.update({
-        where: { id: inventory.id },
-        data: { quantity: { increment: item.quantity } },
-      });
-
-      this.logger.debug(
-        `Released ${item.quantity} units of ${item.productId}`,
-      );
-    }
+    await Promise.all(
+      items.map(item => {
+        const inventory = inventoryMap.get(`${item.productId}|${item.size}|${item.color}`);
+        if (!inventory) {
+          this.logger.warn(
+            `Inventory not found for ${item.productId} (size: ${item.size}, color: ${item.color})`,
+          );
+          return Promise.resolve();
+        }
+        this.logger.debug(`Released ${item.quantity} units of ${item.productId}`);
+        return client.inventory.update({
+          where: { id: inventory.id },
+          data: { quantity: { increment: item.quantity } },
+        });
+      })
+    );
   }
 
   async getAvailability(productId: string, size?: string, color?: string) {
