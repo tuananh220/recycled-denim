@@ -18,10 +18,6 @@ export class CacheService {
     await this.cache.del(key);
   }
 
-  async reset(): Promise<void> {
-    await this.cache.reset();
-  }
-
   async wrap<T>(
     key: string,
     fn: () => Promise<T>,
