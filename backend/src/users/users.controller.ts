@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -16,6 +16,32 @@ export class UsersController {
   @Patch('me')
   updateProfile(@CurrentUser('id') id: string, @Body() dto: { name?: string; phone?: string; avatarUrl?: string }) {
     return this.users.updateProfile(id, dto);
+  }
+
+  @Patch('me/password')
+  changePassword(
+    @CurrentUser('id') id: string,
+    @Body() body: { currentPassword: string; newPassword: string },
+  ) {
+    return this.users.changePassword(id, body.currentPassword, body.newPassword);
+  }
+
+  @Patch('me/email')
+  requestEmailChange(@CurrentUser('id') id: string, @Body() body: { newEmail: string }) {
+    return this.users.requestEmailChange(id, body.newEmail);
+  }
+
+  @Post('me/email/verify')
+  verifyEmailChange(
+    @CurrentUser('id') id: string,
+    @Body() body: { token: string; newEmail: string },
+  ) {
+    return this.users.verifyEmailChange(id, body.token, body.newEmail);
+  }
+
+  @Patch('me/phone')
+  changePhone(@CurrentUser('id') id: string, @Body() body: { phone: string }) {
+    return this.users.changePhone(id, body.phone);
   }
 
   @Roles(Role.ADMIN) @Get()

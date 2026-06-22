@@ -227,5 +227,31 @@ export class MailService {
     return this.send(email, `[ECHOVE] Đơn hàng hoàn tiền #${order.number}`,
       `<p>Đơn hàng #${order.number} đã được hoàn tiền. Số tiền: ${formatVND(order.total)}</p>`);
   }
+
+  sendEmailChangeRequest(email: string, token: string) {
+    const url = `${this.appUrl}/(auth)/verify-email?token=${token}&isEmailChange=true`;
+    return this.send(email, 'Xác nhận đổi email - INDIGO',
+      `<h2>Yêu cầu đổi email</h2>
+       <p>Bạn đã yêu cầu đổi email tài khoản INDIGO của mình.</p>
+       <p>Nhấp vào liên kết dưới đây để xác nhận (hết hạn trong 30 phút):</p>
+       <p><a href="${url}" style="background-color: #312e81; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Xác nhận đổi email</a></p>
+       <p>Hoặc sao chép liên kết này: ${url}</p>`);
+  }
+
+  sendEmailChangeNotification(newEmail: string, oldEmail: string) {
+    return this.send(newEmail, 'Email đã được thay đổi - INDIGO',
+      `<h2>Xác nhận đổi email</h2>
+       <p>Email của tài khoản INDIGO đã được thay đổi thành công.</p>
+       <p><strong>Email cũ:</strong> ${oldEmail}</p>
+       <p><strong>Email mới:</strong> ${newEmail}</p>
+       <p>Nếu bạn không thực hiện thay đổi này, vui lòng liên hệ support ngay lập tức.</p>`);
+  }
+
+  sendPasswordChangedNotification(email: string) {
+    return this.send(email, 'Mật khẩu đã được thay đổi - INDIGO',
+      `<h2>Xác nhận thay đổi mật khẩu</h2>
+       <p>Mật khẩu tài khoản INDIGO của bạn đã được thay đổi thành công.</p>
+       <p>Nếu bạn không thực hiện thay đổi này, vui lòng đặt lại mật khẩu ngay lập tức bằng chức năng quên mật khẩu.</p>`);
+  }
 }
 

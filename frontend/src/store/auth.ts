@@ -78,3 +78,6 @@ export const useAuth = create<AuthState>()(
     },
   ),
 );
+
+// Alias for convenience
+export const useAuthStore = useAuth;

@@ -25,6 +25,8 @@ import { PostsModule } from './posts/posts.module';
 import { FaqModule } from './faq/faq.module';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { ShippingModule } from './shipping/shipping.module';
+import { AddressesModule } from './addresses/addresses.module';
+import { AccountSettingsModule } from './account-settings/account-settings.module';
 
 @Module({
   imports: [
@@ -52,6 +54,8 @@ import { ShippingModule } from './shipping/shipping.module';
     FaqModule,
     TestimonialsModule,
     ShippingModule,
+    AddressesModule,
+    AccountSettingsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
