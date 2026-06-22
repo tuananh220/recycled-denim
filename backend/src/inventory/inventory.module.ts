@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Module, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Module, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
@@ -26,6 +26,11 @@ class InventoryController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: { quantity: number }) {
     return this.inventoryService.updateQuantity(id, dto.quantity);
+  }
+
+  @Post('adjust/:id')
+  adjust(@Param('id') id: string, @Body() dto: { adjustment: number; reason?: string }) {
+    return this.inventoryService.adjustQuantity(id, dto.adjustment, dto.reason);
   }
 }
 

@@ -130,6 +130,33 @@ export class InventoryService {
     return this.prisma.inventory.update({
       where: { id },
       data: { quantity },
+      include: { product: { select: { id: true, name: true, slug: true } } },
+    });
+  }
+
+  async adjustQuantity(id: string, adjustment: number, reason = 'Manual adjustment') {
+    if (!Number.isInteger(adjustment)) {
+      throw new BadRequestException('Adjustment must be an integer');
+    }
+
+    const inventory = await this.prisma.inventory.findUnique({ where: { id } });
+    if (!inventory) {
+      throw new BadRequestException('Inventory not found');
+    }
+
+    const newQuantity = inventory.quantity + adjustment;
+    if (newQuantity < 0) {
+      throw new BadRequestException(
+        `Cannot reduce quantity by ${adjustment}. Current: ${inventory.quantity}, New would be: ${newQuantity}`
+      );
+    }
+
+    this.logger.log(`Adjusted inventory ${id} by ${adjustment} (${reason}). ${inventory.quantity} → ${newQuantity}`);
+
+    return this.prisma.inventory.update({
+      where: { id },
+      data: { quantity: newQuantity },
+      include: { product: { select: { id: true, name: true, slug: true } } },
     });
   }
 }
