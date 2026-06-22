@@ -82,6 +82,57 @@ async function main() {
     }
   }
 
+  // ---------- Additional test products with inventory ----------
+  const additionalProducts = [
+    {
+      slug: 'tui-echove-crossbody',
+      name: 'Túi Echove',
+      description: 'Túi đeo chéo vintage từ jean cũ Levi\'s.',
+      price: 350000,
+      compareAtPrice: 450000,
+      sizes: ['Free'],
+      colors: ['#1f3a5f', '#0f2540'],
+      categoryId: tuiCat!.id,
+      images: ['https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=1200'],
+    },
+    {
+      slug: 'ao-khoac-denim-patchwork',
+      name: 'Áo Khoác Patchwork',
+      description: 'Áo khoác denim patchwork độc bản từ những chiếc jean khác nhau.',
+      price: 850000,
+      compareAtPrice: 1100000,
+      sizes: ['XS', 'S', 'M', 'L', 'XL'],
+      colors: ['Blue'],
+      categoryId: tuiCat!.id,
+      images: ['https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=1200'],
+    },
+  ];
+
+  for (const prodData of additionalProducts) {
+    const { images, sizes, colors, ...rest } = prodData;
+    const p = await prisma.product.upsert({
+      where: { slug: prodData.slug },
+      update: {},
+      create: {
+        ...rest,
+        images: { create: images.map((url, i) => ({ url, position: i })) },
+        isActive: true,
+      },
+    });
+    for (const size of sizes) {
+      for (const color of colors) {
+        await prisma.inventory.upsert({
+          where: { productId_size_color: { productId: p.id, size, color } },
+          update: {},
+          create: {
+            productId: p.id, size, color, quantity: 5,
+            sku: `${prodData.slug}-${size}-${color}`.toUpperCase(),
+          },
+        });
+      }
+    }
+  }
+
   // ---------- Coupons ----------
   await prisma.coupon.upsert({
     where: { code: 'CHAO10' },

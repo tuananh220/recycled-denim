@@ -14,6 +14,7 @@ export class CreateProductDto {
   @IsOptional() @IsArray() imageUrls?: string[];
   @IsOptional() @IsBoolean() isActive?: boolean;
   @IsOptional() @IsBoolean() isFeatured?: boolean;
+  @IsOptional() @IsInt() @Min(0) initialInventoryQty?: number;
 }
 
 export class UpdateProductDto {

@@ -93,7 +93,7 @@ export class ProductsService {
   }
 
   async create(dto: CreateProductDto) {
-    return this.prisma.product.create({
+    const product = await this.prisma.product.create({
       data: {
         name: dto.name, slug: dto.slug, description: dto.description,
         price: dto.price, compareAtPrice: dto.compareAtPrice ?? null,
@@ -101,12 +101,31 @@ export class ProductsService {
         recycledPercent: dto.recycledPercent ?? 80,
         isFeatured: dto.isFeatured ?? false,
         categoryId: dto.categoryId,
+        isActive: dto.isActive ?? true,
         images: dto.imageUrls?.length ? {
           create: dto.imageUrls.map((url, i) => ({ url, position: i }))
         } : undefined,
       },
       include: { images: true, category: true },
     });
+
+    // Create inventory for all size/color combinations
+    const qty = dto.initialInventoryQty ?? 0;
+    for (const size of dto.sizes) {
+      for (const color of dto.colors) {
+        await this.prisma.inventory.create({
+          data: {
+            productId: product.id,
+            size,
+            color,
+            quantity: qty,
+            sku: `${dto.slug}-${size}-${color.replace('#', '')}`.toUpperCase(),
+          },
+        });
+      }
+    }
+
+    return product;
   }
 
   async update(id: string, dto: UpdateProductDto & { imageUrls?: string[] }) {
