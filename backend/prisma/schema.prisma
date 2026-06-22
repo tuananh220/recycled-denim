@@ -87,6 +87,7 @@ model User {
   oauthAccounts  OAuthAccount[]
   addresses     Address[]
   orders        Order[]
+  orderHistory  OrderHistory[]
   cart          Cart?
   reviews       Review[]
   wishlist      WishlistItem[]
@@ -242,6 +243,7 @@ model Order {
   couponCode      String?
   items           OrderItem[]
   payments        Payment[]
+  history         OrderHistory[]
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
@@ -278,6 +280,21 @@ model Payment {
   order         Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
+}
+
+model OrderHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  oldStatus OrderStatus
+  newStatus OrderStatus
+  changedBy String
+  reason    String?
+  createdAt DateTime    @default(now())
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [changedBy], references: [id], name: "changedByUser")
+
+  @@index([orderId])
+  @@index([changedBy])
 }
 
 // -------------------- REVIEWS & WISHLIST --------------------

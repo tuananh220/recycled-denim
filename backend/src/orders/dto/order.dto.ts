@@ -1,15 +1,63 @@
-import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  IsNotEmpty,
+  MinLength,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 import { OrderStatus, PaymentProvider } from '@prisma/client';
+import { Type } from 'class-transformer';
+
+export class ShippingAddressDto {
+  @IsString() @IsNotEmpty() fullName: string;
+  @IsString() @IsNotEmpty() phone: string;
+  @IsString() @IsNotEmpty() line1: string;
+  @IsString() @IsNotEmpty() city: string;
+  @IsString() @IsNotEmpty() district: string;
+  @IsString() @IsNotEmpty() ward: string;
+  @IsString() @IsNotEmpty() postalCode: string;
+  @IsString() country: string;
+}
 
 export class CheckoutDto {
-  @IsObject() shippingAddress: any;
-  /** Currently only COD is supported. Kept as optional for future expansion. */
-  @IsOptional() @IsEnum(PaymentProvider) paymentProvider?: PaymentProvider;
-  @IsOptional() @IsString() couponCode?: string;
-  @IsOptional() @IsString() notes?: string;
+  @IsObject()
+  @ValidateNested()
+  @Type(() => ShippingAddressDto)
+  shippingAddress: ShippingAddressDto;
+
+  @IsOptional()
+  @IsEnum(PaymentProvider)
+  paymentProvider?: PaymentProvider;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(50)
+  couponCode?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  notes?: string;
 }
 
 export class UpdateOrderStatusDto {
-  @IsEnum(OrderStatus) status: OrderStatus;
-  @IsOptional() @IsString() trackingNumber?: string;
+  @IsEnum(OrderStatus)
+  status: OrderStatus;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(5)
+  @MaxLength(100)
+  trackingNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  reason?: string;
 }
+

@@ -196,4 +196,29 @@ export class MailService {
 
     return this.send(email, `[ECHOVE] Xác nhận hủy đơn hàng thành công #${order.number}`, html);
   }
+
+  sendOrderConfirmed(email: string, order: any) {
+    const formatVND = (n: any) => `${new Intl.NumberFormat('vi-VN').format(Number(n))} VNĐ`;
+    return this.send(email, `[ECHOVE] Đơn hàng được xác nhận #${order.number}`,
+      `<p>Đơn hàng của bạn #${order.number} đã được ECHOVE xác nhận và đang được chuẩn bị. Tổng giá: ${formatVND(order.total)}</p>`);
+  }
+
+  sendOrderShipped(email: string, order: any, trackingNumber: string) {
+    const formatVND = (n: any) => `${new Intl.NumberFormat('vi-VN').format(Number(n))} VNĐ`;
+    return this.send(email, `[ECHOVE] Đơn hàng đang giao #${order.number}`,
+      `<p>Hàng của bạn đã được gửi đi! Mã theo dõi: <strong>${trackingNumber}</strong></p><p>Tổng giá: ${formatVND(order.total)}</p>`);
+  }
+
+  sendOrderDelivered(email: string, order: any) {
+    const formatVND = (n: any) => `${new Intl.NumberFormat('vi-VN').format(Number(n))} VNĐ`;
+    return this.send(email, `[ECHOVE] Đơn hàng giao thành công #${order.number}`,
+      `<p>Đơn hàng của bạn đã được giao thành công! Cảm ơn bạn đã lựa chọn ECHOVE.</p><p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ support@echove.vn</p>`);
+  }
+
+  sendOrderRefund(email: string, order: any) {
+    const formatVND = (n: any) => `${new Intl.NumberFormat('vi-VN').format(Number(n))} VNĐ`;
+    return this.send(email, `[ECHOVE] Đơn hàng hoàn tiền #${order.number}`,
+      `<p>Đơn hàng #${order.number} đã được hoàn tiền. Số tiền: ${formatVND(order.total)}</p>`);
+  }
 }
+
