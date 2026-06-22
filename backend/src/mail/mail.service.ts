@@ -16,8 +16,9 @@ export class MailService {
 
   async send(to: string, subject: string, html: string) {
     if (!process.env.SMTP_HOST) {
-      this.logger.warn(`[mail dry-run] to=${to} subject="${subject}"`);
-      return;
+      const error = 'SMTP_HOST is not configured - cannot send email';
+      this.logger.error(error);
+      throw new Error(error);
     }
     await this.transporter.sendMail({ from: this.from, to, subject, html });
   }

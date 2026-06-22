@@ -268,10 +268,12 @@ export class OrdersService {
       return result;
     });
 
-    // Send notification email based on new status
-    this.sendStatusChangeEmail(updated, dto.status).catch(err => {
-      this.logger.error('Failed to send status change email:', err);
-    });
+    try {
+      await this.sendStatusChangeEmail(updated, dto.status);
+      this.logger.log(`Status email sent for order ${updated.number}`);
+    } catch (err) {
+      this.logger.error(`Failed to send status email for ${updated.number}:`, err);
+    }
 
     this.logger.log(
       `Order ${order.number} status updated to ${dto.status} by ${userId}`,
@@ -354,13 +356,11 @@ export class OrdersService {
         await this.mail.sendOrderConfirmed(order.user.email, order);
         break;
       case OrderStatus.SHIPPED:
-        if (order.trackingNumber) {
-          await this.mail.sendOrderShipped(
-            order.user.email,
-            order,
-            order.trackingNumber,
-          );
-        }
+        await this.mail.sendOrderShipped(
+          order.user.email,
+          order,
+          order.trackingNumber || 'Đang cập nhật',
+        );
         break;
       case OrderStatus.DELIVERED:
         await this.mail.sendOrderDelivered(order.user.email, order);
