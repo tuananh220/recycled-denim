@@ -15,7 +15,7 @@ export class MailService {
       maxConnections: 5,
       maxMessages: 100,
     },
-  });
+  } as any);
 
   private appUrl = process.env.APP_URL || 'http://localhost:3000';
   private from = process.env.MAIL_FROM || 'noreply@indigo.dev';
