@@ -10,7 +10,7 @@ async function fetchProducts(sp: SearchParams) {
   const params = new URLSearchParams();
   Object.entries(sp).forEach(([k, v]) => v && params.set(k, v));
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?${params}`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?${params}`, { next: { revalidate: 3600 } });
     if (!res.ok) return { data: [], meta: { total: 0, page: 1, totalPages: 1 } };
     return res.json();
   } catch { return { data: [], meta: { total: 0, page: 1, totalPages: 1 } }; }

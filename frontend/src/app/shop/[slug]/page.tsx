@@ -8,12 +8,12 @@ import { RecentlyViewed } from '@/components/marketing/recently-viewed';
 import { formatCurrency } from '@/lib/utils';
 
 async function getProduct(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`, { next: { revalidate: 1800 } });
   if (!res.ok) return null;
   return res.json();
 }
 async function getRelated(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${slug}/related`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${slug}/related`, { next: { revalidate: 1800 } });
   if (!res.ok) return [];
   return res.json();
 }

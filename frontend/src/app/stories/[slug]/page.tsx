@@ -5,7 +5,7 @@ import { Markdown } from '@/lib/markdown';
 import { formatDate } from '@/lib/utils';
 
 async function getPost(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`, { next: { revalidate: 3600 } });
   if (!res.ok) return null;
   return res.json();
 }
