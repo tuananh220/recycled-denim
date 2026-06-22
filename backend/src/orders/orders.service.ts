@@ -96,12 +96,18 @@ export class OrdersService {
         const count = await tx.order.count();
         const number = `INDG-${ord(count + 1)}`;
 
+        // Determine order status based on payment provider
+        // COD: Start as PROCESSING (already confirmed)
+        // Other providers: Start as PENDING (waiting for payment)
+        const isCOD = dto.paymentProvider === PaymentProvider.COD || !dto.paymentProvider;
+        const initialOrderStatus = isCOD ? OrderStatus.PROCESSING : OrderStatus.PENDING;
+
         // Create order
         const newOrder = await tx.order.create({
           data: {
             number,
             userId,
-            status: OrderStatus.PENDING,
+            status: initialOrderStatus,
             paymentStatus: PaymentStatus.PENDING,
             subtotal,
             shipping,
@@ -138,10 +144,10 @@ export class OrdersService {
         await tx.orderHistory.create({
           data: {
             orderId: newOrder.id,
-            oldStatus: OrderStatus.PENDING,
-            newStatus: OrderStatus.PENDING,
+            oldStatus: initialOrderStatus,
+            newStatus: initialOrderStatus,
             changedBy: userId,
-            reason: 'Order created via checkout',
+            reason: isCOD ? 'Order created via checkout (COD - Payment on delivery)' : 'Order created via checkout (Waiting for payment)',
           },
         });
 
