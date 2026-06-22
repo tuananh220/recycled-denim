@@ -145,6 +145,10 @@ export class ProductsService {
   }
 
   remove(id: string) {
-    return this.prisma.product.update({ where: { id }, data: { isActive: false } });
+    return this.prisma.product.update({
+      where: { id },
+      data: { isActive: false },
+      include: { images: true, category: true },
+    });
   }
 }
