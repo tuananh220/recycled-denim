@@ -30,10 +30,14 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState<VNAddress>({});
   const [shipping, setShipping] = useState<{ fee: number; leadTimeDays: number } | null>(null);
   const [shippingLoading, setShippingLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
   const router = useRouter();
 
   const { register, handleSubmit, watch } = useForm<FormValues>();
   const phone = watch('phone');
+  const watchCoupon = watch('couponCode');
 
   useEffect(() => { fetchMe(); }, [fetchMe]);
   useEffect(() => {
@@ -43,6 +47,31 @@ export default function CheckoutPage() {
   }, [hydrated, user, router, fetch]);
 
   const sub = subtotal();
+
+  // Validate & calculate coupon discount
+  useEffect(() => {
+    if (!watchCoupon) {
+      setCouponDiscount(0);
+      return;
+    }
+    setCouponLoading(true);
+    api.get(`/coupons/validate/${watchCoupon}`)
+      .then(r => {
+        const coupon = r.data;
+        let discount = 0;
+        if (coupon.type === 'PERCENT') {
+          discount = (sub * coupon.value) / 100;
+        } else {
+          discount = coupon.value;
+        }
+        setCouponDiscount(discount);
+      })
+      .catch(() => {
+        setCouponDiscount(0);
+        toast.error('Mã giảm giá không hợp lệ');
+      })
+      .finally(() => setCouponLoading(false));
+  }, [watchCoupon, sub]);
 
   // Auto calculate shipping when district selected
   useEffect(() => {
@@ -61,7 +90,7 @@ export default function CheckoutPage() {
   }, [address.districtCode, address.wardCode, address.provinceCode, sub, items]);
 
   const shippingFee = shipping?.fee ?? 0;
-  const total = sub + shippingFee;
+  const total = sub + shippingFee - couponDiscount;
 
   async function onSubmit(v: FormValues) {
     if (!isValidVNPhone(v.phone)) {
@@ -183,6 +212,12 @@ export default function CheckoutPage() {
                shippingFee === 0 ? 'Miễn phí' : formatCurrency(shippingFee)}
             </span>
           </div>
+          {couponDiscount > 0 && (
+            <div className="flex justify-between text-green-600">
+              <span>Giảm giá</span>
+              <span>-{formatCurrency(couponDiscount)}</span>
+            </div>
+          )}
           {shipping && shippingFee > 0 && (
             <p className="text-xs text-muted-foreground">Giao trong {shipping.leadTimeDays} ngày</p>
           )}
