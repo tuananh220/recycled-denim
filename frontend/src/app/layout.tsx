@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { DM_Sans, DM_Mono } from 'next/font/google';
 import '../styles/globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/layout/navbar';
@@ -7,19 +6,6 @@ import { Footer } from '@/components/layout/footer';
 import { AnnouncementBar } from '@/components/marketing/announcement-bar';
 import { NewsletterPopup } from '@/components/marketing/newsletter-popup';
 import { BRAND } from '@/lib/brand';
-
-const sans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-const mono = DM_Mono({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -40,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${sans.variable} ${mono.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <ThemeProvider>
           <AnnouncementBar />
           <Navbar />
