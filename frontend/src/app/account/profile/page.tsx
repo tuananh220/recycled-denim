@@ -44,23 +44,23 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8">
       {/* Current Profile Info */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-6">Account Information</h2>
+      <div className="bg-background border border-border rounded-lg shadow p-6">
+        <h2 className="text-xl font-bold text-foreground mb-6">Account Information</h2>
         <div className="space-y-4">
           <div>
-            <Label className="text-sm font-medium text-slate-600">Email</Label>
-            <p className="text-lg text-slate-900">{user?.email}</p>
+            <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+            <p className="text-lg text-foreground">{user?.email}</p>
             <p className={`text-sm mt-1 ${user?.emailVerified ? 'text-green-600' : 'text-amber-600'}`}>
               {user?.emailVerified ? '✓ Verified' : '⚠️ Not Verified'}
             </p>
           </div>
           <div>
-            <Label className="text-sm font-medium text-slate-600">Role</Label>
-            <p className="text-lg text-slate-900 capitalize">{user?.role?.toLowerCase()}</p>
+            <Label className="text-sm font-medium text-muted-foreground">Role</Label>
+            <p className="text-lg text-foreground capitalize">{user?.role?.toLowerCase()}</p>
           </div>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-200 flex gap-3">
+        <div className="mt-6 pt-6 border-t border-border flex gap-3">
           <Button variant="outline" asChild>
             <a href="/account/security">Change Email</a>
           </Button>
@@ -71,8 +71,8 @@ export default function ProfilePage() {
       </div>
 
       {/* Edit Profile Form */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold text-slate-900 mb-6">Edit Profile</h2>
+      <div className="bg-background border border-border rounded-lg shadow p-6">
+        <h2 className="text-xl font-bold text-foreground mb-6">Edit Profile</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>

@@ -79,15 +79,15 @@ export default function SecurityPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-slate-900">Security Settings</h2>
+      <h2 className="text-2xl font-bold text-foreground">Security Settings</h2>
 
       {/* Email Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Email Address</h3>
+      <div className="bg-background border border-border rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Email Address</h3>
         <div className="space-y-4">
           <div>
-            <Label className="text-sm font-medium text-slate-600">Current Email</Label>
-            <p className="text-lg text-slate-900 font-mono">{user?.email}</p>
+            <Label className="text-sm font-medium text-muted-foreground">Current Email</Label>
+            <p className="text-lg text-foreground font-mono">{user?.email}</p>
             <p className={`text-sm mt-1 ${user?.emailVerified ? 'text-green-600' : 'text-amber-600'}`}>
               {user?.emailVerified ? '✓ Verified' : '⚠️ Not Verified'}
             </p>
@@ -104,10 +104,10 @@ export default function SecurityPage() {
       </div>
 
       {/* Password Section */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Password</h3>
+      <div className="bg-background border border-border rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Password</h3>
         <div className="space-y-4">
-          <p className="text-slate-600 text-sm">
+          <p className="text-muted-foreground text-sm">
             Keep your password strong and unique to protect your account.
           </p>
 
@@ -122,12 +122,12 @@ export default function SecurityPage() {
       </div>
 
       {/* Login Activity - Placeholder */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Connected Devices</h3>
-        <p className="text-slate-600 text-sm mb-4">
+      <div className="bg-background border border-border rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold text-foreground mb-4">Connected Devices</h3>
+        <p className="text-muted-foreground text-sm mb-4">
           View and manage devices and apps that have access to your account.
         </p>
-        <div className="bg-slate-50 rounded p-4 text-center text-slate-600 text-sm">
+        <div className="bg-muted rounded p-4 text-center text-muted-foreground text-sm">
           This feature will be available soon
         </div>
       </div>
@@ -242,7 +242,7 @@ export default function SecurityPage() {
                 type="email"
                 value={user?.email || ''}
                 disabled
-                className="bg-slate-50"
+                className="bg-muted"
               />
             </div>
 
@@ -266,7 +266,7 @@ export default function SecurityPage() {
                   {emailForm.formState.errors.newEmail.message}
                 </p>
               )}
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 A verification link will be sent to your new email address.
               </p>
             </div>

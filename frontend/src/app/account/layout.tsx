@@ -38,16 +38,16 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
+      <div className="bg-background border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">My Account</h1>
+          <h1 className="text-2xl font-bold text-foreground">My Account</h1>
 
           {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100"
+            className="md:hidden p-2 rounded-md text-muted-foreground hover:bg-muted"
           >
             <svg
               className="h-6 w-6"
@@ -71,7 +71,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
           {/* Desktop logout button */}
           <button
             onClick={handleLogout}
-            className="hidden md:inline-flex text-sm font-medium text-slate-600 hover:text-slate-900"
+            className="hidden md:inline-flex text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             Logout
           </button>
@@ -82,7 +82,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className={`md:col-span-1 ${mobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-            <nav className="space-y-2 bg-white rounded-lg p-4 md:bg-transparent md:p-0">
+            <nav className="space-y-2 bg-background border border-border rounded-lg p-4 md:bg-transparent md:border-0 md:p-0">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -91,8 +91,8 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
                     href={item.href}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-md transition-colors ${
                       isActive
-                        ? 'bg-indigo-50 text-indigo-600 font-medium'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ? 'bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -105,7 +105,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
               {/* Mobile logout button */}
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center space-x-3 px-4 py-3 rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 md:hidden"
+                className="w-full flex items-center space-x-3 px-4 py-3 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
               >
                 <span className="text-xl">🚪</span>
                 <span>Logout</span>

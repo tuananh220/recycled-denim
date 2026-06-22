@@ -60,12 +60,12 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-slate-900">Account Settings</h2>
+      <h2 className="text-2xl font-bold text-foreground">Account Settings</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Notifications Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-6">Email Notifications</h3>
+        <div className="bg-background border border-border rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-6">Email Notifications</h3>
 
           <div className="space-y-4">
             <Controller
@@ -84,11 +84,11 @@ export default function SettingsPage() {
                   <div className="ml-3 flex-1">
                     <label
                       htmlFor="emailNotifications"
-                      className="text-sm font-medium text-slate-900 cursor-pointer"
+                      className="text-sm font-medium text-foreground cursor-pointer"
                     >
                       Email Notifications
                     </label>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Receive email notifications about your account activity
                     </p>
                   </div>
@@ -112,11 +112,11 @@ export default function SettingsPage() {
                   <div className="ml-3 flex-1">
                     <label
                       htmlFor="emailOnOrderStatus"
-                      className="text-sm font-medium text-slate-900 cursor-pointer"
+                      className="text-sm font-medium text-foreground cursor-pointer"
                     >
                       Order Status Updates
                     </label>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Get notified when your orders are confirmed, shipped, or delivered
                     </p>
                   </div>
@@ -140,11 +140,11 @@ export default function SettingsPage() {
                   <div className="ml-3 flex-1">
                     <label
                       htmlFor="emailPromotions"
-                      className="text-sm font-medium text-slate-900 cursor-pointer"
+                      className="text-sm font-medium text-foreground cursor-pointer"
                     >
                       Promotional Emails
                     </label>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Receive emails about special offers, sales, and new products
                     </p>
                   </div>
@@ -155,8 +155,8 @@ export default function SettingsPage() {
         </div>
 
         {/* Privacy Section */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-6">Privacy Settings</h3>
+        <div className="bg-background border border-border rounded-lg shadow p-6">
+          <h3 className="text-lg font-semibold text-foreground mb-6">Privacy Settings</h3>
 
           <div className="space-y-4">
             <Controller
@@ -175,11 +175,11 @@ export default function SettingsPage() {
                   <div className="ml-3 flex-1">
                     <label
                       htmlFor="profilePublic"
-                      className="text-sm font-medium text-slate-900 cursor-pointer"
+                      className="text-sm font-medium text-foreground cursor-pointer"
                     >
                       Public Profile
                     </label>
-                    <p className="text-sm text-slate-600 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Allow others to view your public profile and reviews
                     </p>
                   </div>

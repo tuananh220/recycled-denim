@@ -149,36 +149,36 @@ export default function AddressesPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900">Shipping Addresses</h2>
+        <h2 className="text-2xl font-bold text-foreground">Shipping Addresses</h2>
         <Button onClick={handleOpenNew} className="bg-indigo-600 hover:bg-indigo-700">
           + Add New Address
         </Button>
       </div>
 
       {addresses.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <p className="text-slate-600 mb-4">No addresses yet</p>
+        <div className="bg-background border border-border rounded-lg shadow p-12 text-center">
+          <p className="text-muted-foreground mb-4">No addresses yet</p>
           <Button onClick={handleOpenNew}>Add First Address</Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {addresses.map((address) => (
-            <div key={address.id} className="bg-white rounded-lg shadow p-6 border-l-4 border-indigo-600">
+            <div key={address.id} className="bg-background border border-border rounded-lg shadow p-6 border-l-4 border-indigo-600">
               {address.isDefault && (
                 <span className="inline-block bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded mb-3">
                   Default Address
                 </span>
               )}
               <div className="space-y-2 mb-4">
-                <p className="font-semibold text-slate-900">{address.fullName}</p>
-                <p className="text-slate-600">{address.line1}</p>
-                {address.line2 && <p className="text-slate-600">{address.line2}</p>}
-                <p className="text-slate-600">
+                <p className="font-semibold text-foreground">{address.fullName}</p>
+                <p className="text-muted-foreground">{address.line1}</p>
+                {address.line2 && <p className="text-muted-foreground">{address.line2}</p>}
+                <p className="text-muted-foreground">
                   {address.city}
                   {address.region && `, ${address.region}`}
                 </p>
-                <p className="text-slate-600">{address.postalCode}, {address.country}</p>
-                <p className="text-slate-600">📞 {address.phone}</p>
+                <p className="text-muted-foreground">{address.postalCode}, {address.country}</p>
+                <p className="text-muted-foreground">📞 {address.phone}</p>
               </div>
 
               <div className="flex gap-2">
@@ -334,7 +334,7 @@ export default function AddressesPage() {
                 disabled={submitting}
                 className="h-4 w-4 text-indigo-600 rounded"
               />
-              <label htmlFor="isDefault" className="ml-2 text-sm text-slate-600">
+              <label htmlFor="isDefault" className="ml-2 text-sm text-muted-foreground">
                 Set as default address
               </label>
             </div>
