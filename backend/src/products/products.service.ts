@@ -111,7 +111,7 @@ export class ProductsService {
 
     // Batch create inventory for all size/color combinations
     const qty = dto.initialInventoryQty ?? 0;
-    const inventoryItems = [];
+    const inventoryItems: Prisma.InventoryCreateManyInput[] = [];
     for (const size of dto.sizes) {
       for (const color of dto.colors) {
         inventoryItems.push({
