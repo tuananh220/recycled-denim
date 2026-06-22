@@ -268,12 +268,9 @@ export class OrdersService {
       return result;
     });
 
-    try {
-      await this.sendStatusChangeEmail(updated, dto.status);
-      this.logger.log(`Status email sent for order ${updated.number}`);
-    } catch (err) {
-      this.logger.error(`Failed to send status email for ${updated.number}:`, err);
-    }
+    this.sendStatusChangeEmail(updated, dto.status)
+      .then(() => this.logger.log(`Status email sent for order ${updated.number}`))
+      .catch(err => this.logger.error(`Failed to send status email for ${updated.number}:`, err));
 
     this.logger.log(
       `Order ${order.number} status updated to ${dto.status} by ${userId}`,

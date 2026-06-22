@@ -9,6 +9,12 @@ export class MailService {
     port: Number(process.env.SMTP_PORT) || 465,
     secure: true,
     auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD } : undefined,
+    connectionTimeout: 10000,
+    socketTimeout: 10000,
+    pool: {
+      maxConnections: 5,
+      maxMessages: 100,
+    },
   });
 
   private appUrl = process.env.APP_URL || 'http://localhost:3000';
